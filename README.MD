@@ -7,7 +7,7 @@ This project has the goal to study design patterns implemented in C#.
 
 ## Structural
 
-**Adapter**
+<br>**Adapter**
 Adapter is a structural design patterns that allow different classes to communicate.
 Ex: Different implementations of gateway that have to communicate with your domain that have different interface.
 
