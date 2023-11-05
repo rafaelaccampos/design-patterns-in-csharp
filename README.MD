@@ -5,15 +5,17 @@
 ## 💻 Project
 This project has the goal to study design patterns implemented in C#.
 
-## STRUCTURAL
-# Adapter
+## Structural
+Adapter
 Adapter is a structural design patterns that allow different classes to communicate.
 Ex: Different implementations of gateway that have to communicate with your domain that have different interface.
+
 PROS:
--- SINGLE RESPONSABILITY
+- SINGLE RESPONSABILITY
 Separate the interface data from the business logic.
--- OPEN CLOSED PRINCIPLE
+- OPEN CLOSED PRINCIPLE
 You can introduce new adapters without breaking the existing client, as long the contract of interface be preserved.
+
 CONS:
 The complexity of code increases because you introduced a lot of new interfaces and classes.
 
