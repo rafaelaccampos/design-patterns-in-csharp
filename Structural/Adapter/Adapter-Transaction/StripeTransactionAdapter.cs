@@ -1,6 +1,6 @@
 ﻿namespace DesignPatterns.Structural.Adapter.Adapter_Transaction
 {
-    public class StripeTransactionAdapter : Transaction
+    public class StripeTransactionAdapter : ITransaction
     {
         public StripeTransactionAdapter(StripeTransaction stripeTransaction)
         {

@@ -1,6 +1,6 @@
 ﻿namespace DesignPatterns.Structural.Adapter.Adapter_Transaction
 {
-    public class PayPalTransactionAdapter : Transaction
+    public class PayPalTransactionAdapter : ITransaction
     {
         public PayPalTransactionAdapter(PaypalTransaction payPalTransaction)
         {
