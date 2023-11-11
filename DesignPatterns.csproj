@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <Folder Include="Creational\" />
-    <Folder Include="Behavioral\" />
   </ItemGroup>
 
 </Project>
