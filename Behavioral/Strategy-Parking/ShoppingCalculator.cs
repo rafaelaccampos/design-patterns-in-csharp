@@ -1,6 +1,4 @@
-﻿using DesignPatterns.Behavioral.Strategy;
-
-namespace DesignPatterns.Behavioral.Strategy_Parking
+﻿namespace DesignPatterns.Behavioral.Strategy_Parking
 {
     public class ShoppingCalculator : ITicketCalculator
     {

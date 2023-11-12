@@ -1,28 +1,28 @@
-﻿using DesignPatterns.Behavioral.Strategy;
-using System.Runtime.InteropServices;
-
-namespace DesignPatterns.Behavioral.Strategy_Parking
+﻿namespace DesignPatterns.Behavioral.Strategy_Parking
 {
     public class TicketCalculatorFactory
     {
+        private static IDictionary<string, ITicketCalculator> calculators = new Dictionary<string, ITicketCalculator>()
+        {
+            {
+                "beach", new BeachCalculator()
+            },
+            {
+                "shopping", new ShoppingCalculator()
+            },
+            {
+                "airport", new AiportCalculator()
+            }
+    };
+
         public static ITicketCalculator Create(string location)
         {
-            switch(location)
+            if(!calculators.TryGetValue(location, out var findCalculator))
             {
-                case "beach":
-                    {
-                        return new BeachCalculator();
-                    }
-                case "shopping":
-                    {
-                        return new ShoppingCalculator();
-                    }
-                case "airport":
-                    {
-                        return new AiportCalculator();
-                    }
+                throw new Exception("Ticket calculator not found!");
             }
-            throw new Exception("Ticket calculator not found!");
+
+            return findCalculator;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace DesignPatterns.Behavioral.Strategy
+﻿namespace DesignPatterns.Behavioral.Strategy_Parking
 {
     public class Period
     {
@@ -11,19 +11,19 @@
             _endTime = endTime;
         }
 
-        public int GetDiffInMilli()
+        public int GetDiffInMilliseconds()
         {
             return _endTime.Millisecond - _startTime.Millisecond;
         }
 
         public int GetDiffInHours()
         {
-            return (GetDiffInMilli()/(100 * 60 * 60 * 24));
+            return (GetDiffInMilliseconds()/(100 * 60 * 60 * 24));
         }
 
         public int GetDiffInDays()
         {
-            return ((GetDiffInMilli()) / (100 * 60 * 60 * 24));
+            return ((GetDiffInMilliseconds()) / (100 * 60 * 60 * 24));
         }
     }
 }

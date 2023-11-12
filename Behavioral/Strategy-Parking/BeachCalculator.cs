@@ -1,4 +1,4 @@
-﻿namespace DesignPatterns.Behavioral.Strategy
+﻿namespace DesignPatterns.Behavioral.Strategy_Parking
 {
     public class BeachCalculator : ITicketCalculator
     {
