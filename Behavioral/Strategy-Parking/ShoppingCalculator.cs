@@ -2,11 +2,11 @@
 {
     public class ShoppingCalculator : ITicketCalculator
     {
-        private const int BASE_RATE = 10;
+        private const long BASE_RATE = 10;
         private const int BASE_PERIOD = 3;
         private const int HOURLY_RATE = 3;
 
-        public int Calculate(Period period)
+        public long Calculate(Period period)
         {
             var price = BASE_RATE;
             var remainingHours = period.GetDiffInHours() - BASE_PERIOD;

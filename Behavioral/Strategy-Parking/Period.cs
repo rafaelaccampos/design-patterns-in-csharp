@@ -11,19 +11,20 @@
             _endTime = endTime;
         }
 
-        public int GetDiffInMilliseconds()
+        public long GetDiffInMilliseconds()
         {
-            return _endTime.Millisecond - _startTime.Millisecond;
+            var difference = _endTime - _startTime;
+            return Convert.ToInt64(difference.TotalMilliseconds);
         }
 
-        public int GetDiffInHours()
+        public long GetDiffInHours()
         {
-            return (GetDiffInMilliseconds()/(100 * 60 * 60 * 24));
+            return GetDiffInMilliseconds()/(1000 * 60 * 60);
         }
 
-        public int GetDiffInDays()
+        public long GetDiffInDays()
         {
-            return ((GetDiffInMilliseconds()) / (100 * 60 * 60 * 24));
+            return ((GetDiffInMilliseconds()) / (1000 * 60 * 60 * 24));
         }
     }
 }

@@ -2,6 +2,6 @@
 {
     public interface ITicketCalculator
     {
-        int Calculate(Period period);
+        long Calculate(Period period);
     }
 }

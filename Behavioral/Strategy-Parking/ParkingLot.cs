@@ -2,30 +2,33 @@
 {
     public class ParkingLot
     {
-        private readonly IList<Ticket> tickets;
-        private readonly ITicketCalculator ticketCalculator;
+        private readonly IList<Ticket> _tickets;
+        private readonly ITicketCalculator _ticketCalculator;
+        private readonly int _totalLots;
 
-        public ParkingLot(string location)
+        public ParkingLot(string location, int totalLots)
         {
-            tickets = new List<Ticket>();
-            ticketCalculator = TicketCalculatorFactory.Create(location);
+            _tickets = new List<Ticket>();
+            _ticketCalculator = TicketCalculatorFactory.Create(location);
+            _totalLots = totalLots;
         }
 
         public void CheckIn(Ticket ticket)
         {
-            tickets.Add(ticket);
+            _tickets.Add(ticket);
         }
 
         public void CheckOut(string plate, DateTime checkoutDate)
         {
             var ticket = GetTicket(plate);
             var period = new Period(ticket.CheckInDate, checkoutDate);
-            ticket.Price = this.ticketCalculator.Calculate(period);
+            ticket.Price = _ticketCalculator.Calculate(period);
         }
 
         public Ticket GetTicket(string plate)
         {
-            var ticket = tickets.FirstOrDefault(ticket => ticket.Plate == plate);
+            var ticket = _tickets.FirstOrDefault(ticket => ticket.Plate == plate);
+
             if (ticket == null)
             {
                 throw new Exception("Ticket not found!");
@@ -33,9 +36,9 @@
             return ticket;
         }
 
-        public int GetSlots(int totalSlots)
+        public int GetSlots()
         {
-            return totalSlots - tickets.Count;
+            return _totalLots - _tickets.Count;
         }
     }
 }
