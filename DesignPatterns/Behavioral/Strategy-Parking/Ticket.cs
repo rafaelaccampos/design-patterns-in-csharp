@@ -2,7 +2,7 @@
 {
     public class Ticket
     {
-        public string Plate { get; set; }
+        public string Plate { get; set; } = null!;
         public DateTime CheckInDate { get; set; }
         public decimal? Price { get; set; }
     }
