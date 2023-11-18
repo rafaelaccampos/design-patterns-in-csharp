@@ -4,9 +4,9 @@
     {
         private readonly Order _order;
 
-        public OrderStatus()
+        public OrderStatus(Order order)
         {
-            _order = new Order();
+            _order = order;
         }
 
         public abstract string Value { get; set; }
