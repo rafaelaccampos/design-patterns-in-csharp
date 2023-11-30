@@ -2,5 +2,6 @@
 {
     public interface IHandler
     {
+        void Handle(IList<Bill> bills, int amount);
     }
 }
