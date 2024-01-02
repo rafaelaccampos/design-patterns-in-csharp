@@ -1,15 +1,15 @@
-<p align="center">
-  <h1>Design Patterns in C#</h1>
-</p>
+<h1 align="center">Design Patterns in C#</h1>
 
 ## 💻 Project
-This project has the goal to study design patterns implemented in C#.
+This project has the goal to study design patterns implemented in C#. It's contain theory and code implementation.
 
 ## Structural
 
 ### Adapter ###
-Adapter is a structural design patterns that allow different classes to communicate.
-Ex: Different implementations of gateway that have to communicate with your domain that have different interface.
+Adapter is a structural design patterns that allow incompatible classes to communicate. It's serves as well to create an anticorruption layer and to promote uncouple.
+Examples: 
+  - Different implementations of gateway that has to communicate with your domain that has different interface.
+  - When you have legacy code and need to adapt to modern classes.
 
 **PROS**:
 - Single responsability: Separate the interface data from the business logic.
@@ -17,6 +17,13 @@ Ex: Different implementations of gateway that have to communicate with your doma
 
 **CONS**:
 - The complexity of code increases because you introduced a lot of new interfaces and classes.
+
+**How to implement?**
+- Create an interface that describes the contract the others classes should follow.
+- Create the desired classes.
+- Create the adapter for the desired classes that implements the interface.
+- Add a reference to the class you need to adapt in the adapter class. It's common to use the constructor, but you can use when calling its methods.
+- Client should use the adapter class to comunicate with internal classes.
 
 
 ## 🧪 Techs

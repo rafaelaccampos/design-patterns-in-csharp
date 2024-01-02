@@ -15,6 +15,7 @@
 
         public string Status { get; private set; }
 
+//TODO: I can use dictionary here instead of switch
         public string ConvertStatus(string status)
         {
             switch (status)
