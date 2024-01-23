@@ -6,7 +6,7 @@ This project has the goal to study design patterns implemented in C#. It's conta
 ## Structural
 
 ### Adapter ###
-Adapter is a structural design patterns that allow incompatible classes to communicate. It's serves as well to create an anticorruption layer and to promote uncouple.
+Adapter is a structural design pattern that allow incompatible classes to communicate. It's serves as well to create an anticorruption layer and to promote uncouple.
 Examples: 
   - Different implementations of gateway that has to communicate with your domain that has different interface.
   - When you have legacy code and need to adapt to modern classes.
@@ -25,6 +25,12 @@ Examples:
 - Add a reference to the class you need to adapt in the adapter class. It's common to use the constructor, but you can use when calling its methods.
 - Client should use the adapter class to comunicate with internal classes.
 
+## Behavioral
+- Chain of responsability is a behavioral design pattern that allows you to pass requests forward, like a chain. And each request/handle decides what to do next in the chain.
+- Especially useful when it has to do steps in sequence.
+Examples:
+  - When you want to offer a person a credit card, but before you have to check if she's eligible.
+  - When you have to check if users are authenticated and authorized for access a system. So, you can use Chain of Responsabily, when the request is created and execute in sequence the authentication and authorization process to acess the system.
 
 ## 🧪 Techs
 
