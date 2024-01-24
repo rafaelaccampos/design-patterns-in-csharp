@@ -26,11 +26,29 @@ Examples:
 - Client should use the adapter class to comunicate with internal classes.
 
 ## Behavioral
+
+### Chain of Responsability ###
 - Chain of responsability is a behavioral design pattern that allows you to pass requests forward, like a chain. And each request/handle decides what to do next in the chain.
 - Especially useful when it has to do steps in sequence.
+- Chain of responsability transforms behaviors in objects called Handlers.
+- The handlers are linked in a chain and each linked handler has a field for the next reference to the handler.
 Examples:
   - When you want to offer a person a credit card, but before you have to check if she's eligible.
   - When you have to check if users are authenticated and authorized for access a system. So, you can use Chain of Responsabily, when the request is created and execute in sequence the authentication and authorization process to acess the system.
+
+**PROS**:
+ - Control the order of request handling.
+ - Single of Responsability - Decouple classes that invokes operations from class that perform operations.
+ - Open/Closed Principle - Introduce new handlers without breaking the exist client code.
+
+**CONS**:
+- Risk of infinite chain.
+- Debbuging it could be challenging.
+
+**How to implement?**
+- 
+
+
 
 ## 🧪 Techs
 
