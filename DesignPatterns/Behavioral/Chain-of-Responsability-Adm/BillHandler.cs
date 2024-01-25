@@ -1,4 +1,6 @@
-﻿namespace DesignPatterns.Behavioral.Chain_of_Responsability_Adm
+﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace DesignPatterns.Behavioral.Chain_of_Responsability_Adm
 {
     public class BillHandler : IHandler
     {
@@ -27,12 +29,9 @@
             if (_nextHandler != null)
             {
                 _nextHandler.Handle(bills, remaining);
+                return;
             }
-
-            if(remaining > 0)
-            {
-                throw new Exception("Without available notes");
-            }
+            if (remaining > 0) throw new Exception("Without available notes!");
         }
     }
 }

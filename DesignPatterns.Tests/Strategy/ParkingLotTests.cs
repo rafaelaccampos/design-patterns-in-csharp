@@ -13,7 +13,7 @@ namespace DesignPatterns.Tests.Strategy
         }
 
         [Test]
-        public void ShouldBeAble_ToParkTheCarOnTheBeachForTwoHours_AndWhenLeavingTheValueShouldBeTen_FiveByHour()
+        public void ShouldBeAbleToParkTheCarOnTheBeachForTwoHoursAndWhenLeavingTheValueShouldBeTen_FiveByHour()
         {
             var parkingLot = new ParkingLot("beach", 500);
             var ticketDto = new Ticket
@@ -30,7 +30,7 @@ namespace DesignPatterns.Tests.Strategy
         }
 
         [Test]
-        public void ShouldBeAble_ToParkTheCarInTheShoppingForSevenHours_AndWhenLeavingTheValueShouldBeTwentyTwo_TenTheFirstThreeHoursAndAfterThreeForHour()
+        public void ShouldBeAble_ToParkTheCarInTheShoppingForSevenHoursAndWhenLeavingTheValueShouldBeTwentyTwoTenTheFirstThreeHoursAndAfterThreeForHour()
         {
             var parkingLot = new ParkingLot("shopping", 500);
             var ticketDto = new Ticket
@@ -47,7 +47,7 @@ namespace DesignPatterns.Tests.Strategy
         }
 
         [Test]
-        public void ShouldBeAble_ToParkInTheAirportForThreeDays_AndWhenLeavingTheValueShouldBeOneHundredAndFifty_FiftyForDay()
+        public void ShouldBeAble_ToParkInTheAirportForThreeDaysAndWhenLeavingTheValueShouldBeOneHundredAndFiftyForDay()
         {
             var parkingLot = new ParkingLot("airport", 500);
             var ticketDto = new Ticket
