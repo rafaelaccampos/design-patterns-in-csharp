@@ -24,6 +24,7 @@ Examples:
 - Create the adapter for the desired classes that implements the interface.
 - Add a reference to the class you need to adapt in the adapter class. It's common to use the constructor, but you can use when calling its methods.
 - Client should use the adapter class to comunicate with internal classes.
+---
 
 ## Behavioral
 
@@ -44,11 +45,15 @@ Examples:
 **CONS**:
 - Risk of infinite chain.
 - Debbuging it could be challenging.
+- Complexity in the chain configuration.
 
 **How to implement?**
-- 
-
-
+- Declare the handler interface and describe the signature of a method for handling requests. You can convert the request into an object and pass to handler method as an argument.
+- To eliminate duplicated code in concrete handlers, you can create an abstract base handler class, derived from the handler interface. This class has to contain a storing reference to the **next handler** in the chain. Consider making this class immutable, but if you need to modify chains at runtime, you need to define a setter for altering the value of the reference field. Besides that, you will need to create a default behavior for handling method, which is to forward the request to the next object unless there's none object. Concrete handlers will be able to use this by calling the parent method.
+- Create concrete handler subclasses and implement their handling methods. Each handler should make two decisions when receiving a request. Wheter it'll process the request and Wheter it'll pass the request along the chain.
+- You can configure assemble chains on its own, receive pre-built chains from other objects or implement some factory classes to build the chain.
+- The request should pass along the chain until some handler refuses to pass it further or until it reaches the end of the chain.
+- Clients should be ready to handle the following scenarios: the chain may consit of a single link, some request may not reach the end of the chain and others may reach the end of the chain unhandled.
 
 ## 🧪 Techs
 
