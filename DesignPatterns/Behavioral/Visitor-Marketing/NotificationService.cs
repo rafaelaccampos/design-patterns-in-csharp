@@ -2,16 +2,21 @@
 {
     public class NotificationService
     {
-        public IList<IMarketingMessage> Notify(IList<IMarketingMessage> messages)
+        private readonly INotificationVisitor _notificationVisitor;
+
+        public NotificationService(INotificationVisitor notificationVisitor)
         {
-            var visitor = new NotificationVisitor();
+            _notificationVisitor = notificationVisitor;
+        }
+
+        public void Notify(IList<IMarketingMessage> messages)
+        {
+            var visitor = _notificationVisitor;
 
             foreach (var message in messages)
             {
                 message.Accept(visitor);
             }
-
-            return messages;
         }
     }
 }
