@@ -4,12 +4,12 @@
     {
         public string Visit(SmsMessage message)
         {
-            return $"SMS message: {message}";
+            return $"SMS message: From: {message.From}, To: {message.To}, Content: {message.Content}";
         }
 
         public string Visit(EmailMessage message)
         {
-            return $"Email message: {message}";
+            return $"Email message: From: {message.From}, Subject: {message.Subject}, To: {message.To}, Content: {message.Content}";
         }
     }
 }

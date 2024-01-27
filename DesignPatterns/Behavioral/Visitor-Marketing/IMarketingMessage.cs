@@ -8,6 +8,6 @@
 
         string Content { get; }
 
-        void Accept(INotificationVisitor visitor);
+        string Accept(INotificationVisitor visitor);
     }
 }

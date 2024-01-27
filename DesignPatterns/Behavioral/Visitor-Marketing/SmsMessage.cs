@@ -15,9 +15,9 @@
 
         public string Content { get; private set; }
 
-        public void Accept(INotificationVisitor visitor)
+        public string Accept(INotificationVisitor visitor)
         {
-            visitor.Visit(this);
+            return visitor.Visit(this);
         }
     }
 }

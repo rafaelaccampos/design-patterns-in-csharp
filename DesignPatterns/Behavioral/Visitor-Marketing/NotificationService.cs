@@ -9,13 +9,13 @@
             _notificationVisitor = notificationVisitor;
         }
 
-        public void Notify(IList<IMarketingMessage> messages)
+        public IEnumerable<string> Notify(IList<IMarketingMessage> messages)
         {
             var visitor = _notificationVisitor;
 
             foreach (var message in messages)
             {
-                message.Accept(visitor);
+                yield return message.Accept(visitor);
             }
         }
     }

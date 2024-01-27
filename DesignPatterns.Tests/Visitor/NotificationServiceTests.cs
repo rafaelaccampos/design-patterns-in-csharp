@@ -1,6 +1,6 @@
 ﻿using DesignPatterns.Behavioral.Visitor_Marketing;
+using FluentAssertions;
 using FluentAssertions.Execution;
-using NSubstitute;
 
 namespace DesignPatterns.Tests.Visitor
 {
@@ -14,18 +14,14 @@ namespace DesignPatterns.Tests.Visitor
                 new EmailMessage("Rafa", "T", "BFF", "We need to go out sometime!"),
             };
 
-            var notificationVisitor = Substitute.For<INotificationVisitor>();
+            var notificationVisitor = new NotificationVisitor();
             var notificationService = new NotificationService(notificationVisitor);
-            notificationService.Notify(emailMessages);
+            var notifications = notificationService.Notify(emailMessages).ToList();
 
-            var expectedEmailMessage = new EmailMessage("Rafa", "T", "BFF", "We need to go out sometime!");
+            var expectedEmailMessage = "Email message: From: Rafa, Subject: BFF, To: T, Content: We need to go out sometime!";
             using (new AssertionScope())
             {
-                notificationVisitor.Received(1).Visit(Arg.Is<EmailMessage>(n =>
-                    n.From == expectedEmailMessage.From &&
-                    n.To == expectedEmailMessage.To &&
-                    n.Subject == expectedEmailMessage.Subject &&
-                    n.Content == expectedEmailMessage.Content));
+                notifications.Should().BeEquivalentTo(expectedEmailMessage);
             }
         }
 
@@ -37,17 +33,14 @@ namespace DesignPatterns.Tests.Visitor
                 new SmsMessage("T", "Rafa", "Definitely, we need to schedule!"),
             };
 
-            var notificationVisitor = Substitute.For<INotificationVisitor>();
+            var notificationVisitor = new NotificationVisitor();
             var notificationService = new NotificationService(notificationVisitor);
-            notificationService.Notify(smsMessages);
+            var notifications = notificationService.Notify(smsMessages).ToList();
 
-            var expectedSmsMessage = new SmsMessage("T", "Rafa", "Definitely, we need to schedule!");
+            var expectedSmsMessage = "SMS message: From: T, To: Rafa, Content: Definitely, we need to schedule!";
             using (new AssertionScope())
             {
-                notificationVisitor.Received(1).Visit(Arg.Is<SmsMessage>(n =>
-                    n.From == expectedSmsMessage.From &&
-                    n.To == expectedSmsMessage.To &&
-                    n.Content == expectedSmsMessage.Content));
+                notifications.Should().BeEquivalentTo(expectedSmsMessage);
             }
         }
 
@@ -63,22 +56,19 @@ namespace DesignPatterns.Tests.Visitor
                 smsMessage
             };
 
-            var notificationVisitor = Substitute.For<INotificationVisitor>();
+            var notificationVisitor = new NotificationVisitor();
             var notificationService = new NotificationService(notificationVisitor);
-            notificationService.Notify(messages);
+            var notifications = notificationService.Notify(messages).ToList();
+
+            var expectedMessages = new List<string>
+            {
+                { "Email message: From: Rafa, Subject: BFF, To: T, Content: We need to go out sometime!" },
+                { "SMS message: From: T, To: Rafa, Content: Definitely, we need to schedule!" },
+            };
 
             using (new AssertionScope())
             {
-                notificationVisitor.Received(1).Visit(Arg.Is<EmailMessage>(n =>
-                    n.From == emailMessage.From &&
-                    n.To == emailMessage.To &&
-                    n.Subject == emailMessage.Subject &&
-                    n.Content == emailMessage.Content));
-
-                notificationVisitor.Received(1).Visit(Arg.Is<SmsMessage>(n =>
-                    n.From == smsMessage.From &&
-                    n.To == smsMessage.To &&
-                    n.Content == smsMessage.Content));
+                notifications.Should().Contain(expectedMessages);
             }
         }
     }
