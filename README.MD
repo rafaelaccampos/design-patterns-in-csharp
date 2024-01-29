@@ -55,6 +55,17 @@ Examples:
 - The request should pass along the chain until some handler refuses to pass it further or until it reaches the end of the chain.
 - Clients should be ready to handle the following scenarios: the chain may consit of a single link, some request may not reach the end of the chain and others may reach the end of the chain unhandled.
 
+### Visitor ###
+- Visitor is a behavioral design patterns that executes a operation in a list of different objects from the same mother class.
+- It's used when you have different implementation for each object inside a list or a tree.
+
+**PROS**:
+
+**CONS**:
+
+**How to implement?**
+
+
 ## 🧪 Techs
 
 This project was develop with the following technologies:
