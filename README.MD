@@ -69,7 +69,12 @@ Examples:
 - Visitors might not have the necessary access to the private fields and methods.
 
 **How to implement?**
-
+- Declare the visitor interface with visiting methods, one per each concrete element class.
+- Declare abstract class or interface with the method Accept that will receive receive visitor object as an argument.
+- Implement the accept methods in all concrete class. These methods redirect call to the visitor object, that is the class executed in the moment.
+- The element classes only work with visitor via visitor interface. Visitors must be aware of all concrete element classes as paremeter types.
+- For each behavior on the list or tree, you have to create a concrete visitor class and implement the visiting methods.
+- The client must create visitor ojects and pass them into elements via accept methods.
 
 ## 🧪 Techs
 
