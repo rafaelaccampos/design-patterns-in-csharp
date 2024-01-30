@@ -60,8 +60,13 @@ Examples:
 - It's used when you have different implementation for each object inside a list or a tree.
 
 **PROS**:
+- Open closed principle because you introduce new behavior only for the specific objects without changing the father class.
+- Single Responsability Principle, because you separate behavior with the corresponding class.
+- Visitor can accumulate information and be very useful when working with node trees.
 
 **CONS**:
+- You need to update all visitor when a class gets modified from the hierarchy.
+- Visitors might not have the necessary access to the private fields and methods.
 
 **How to implement?**
 
