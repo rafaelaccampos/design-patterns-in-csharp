@@ -2,13 +2,14 @@
 {
     public class BusinessHours
     {
+        private static BusinessHours _instance = null!;
+        
         private BusinessHours(DateTime startTime, DateTime endTime)
         {
             StartTime = startTime;
             EndTime = endTime;
         }
 
-        private static BusinessHours _instance;
 
         public DateTime StartTime { get; private set; }
 
