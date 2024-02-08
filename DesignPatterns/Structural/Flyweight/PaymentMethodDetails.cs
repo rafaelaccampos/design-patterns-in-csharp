@@ -1,10 +1,10 @@
-﻿namespace DesignPatterns.Creational.Flyweight
+﻿namespace DesignPatterns.Structural.Flyweight
 {
     public class PaymentMethodDetails
     {
         public PaymentMethodDetails(
-            string guidanceText, 
-            decimal? minimumValue, 
+            string guidanceText,
+            decimal? minimumValue,
             decimal? maximumValue)
         {
             GuidanceText = guidanceText;

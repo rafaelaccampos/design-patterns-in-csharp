@@ -1,4 +1,4 @@
-﻿namespace DesignPatterns.Creational.Flyweight
+﻿namespace DesignPatterns.Structural.Flyweight
 {
     public class PaymentsMethodFactory
     {
@@ -10,7 +10,7 @@
             {
                 { PaymentMethod.CreditCard, new PaymentMethodDetails("Sobre o Cartão de Crédito!", 1, null) },
                 { PaymentMethod.PaymentSlip, new PaymentMethodDetails("Sobre o Boleto!", 10, 1000) },
-                { PaymentMethod.CreditCard, new PaymentMethodDetails("Sobre o PayPal!", 16.5m, null) },
+                { PaymentMethod.PayPal, new PaymentMethodDetails("Sobre o PayPal!", 16.5m, null) },
             };
         }
 

@@ -1,4 +1,4 @@
-﻿namespace DesignPatterns.Creational.Flyweight
+﻿namespace DesignPatterns.Structural.Flyweight
 {
     public enum PaymentMethod
     {
