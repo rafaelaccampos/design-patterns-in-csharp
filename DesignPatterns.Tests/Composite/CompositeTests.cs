@@ -15,7 +15,6 @@ namespace DesignPatterns.Tests.Composite
 
             var secondComposite = new ManagerComposite("Nathaniel", "Manager", 15000);
             composite.Add(secondComposite);
-
             secondComposite.Add(new Employee("David", "Architect", 300));
             secondComposite.Add(new Employee("Jake", "Architect", 300));
 
