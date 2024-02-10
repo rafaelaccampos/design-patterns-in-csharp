@@ -17,7 +17,7 @@ namespace DesignPatterns.Tests.Observer
             inputText.Subscribe(secondCountryLabel);
             inputText.SetValue("Brasil");
 
-            using(new AssertionScope())
+            using (new AssertionScope())
             {
                 firstCountryLabel.Value.Should().Be("País: Brasil");
                 secondCountryLabel.Value.Should().Be("Country: Brasil");
