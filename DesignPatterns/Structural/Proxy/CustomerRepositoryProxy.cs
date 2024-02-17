@@ -6,12 +6,12 @@ namespace DesignPatterns.Structural.Proxy
     public class CustomerRepositoryProxy
     {
         private readonly CustomerRepository _customerRepository;
-        private readonly IMemoryCache _cache;
+        private readonly IMemoryCacheWrapper _cache;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public CustomerRepositoryProxy(
             CustomerRepository customerRepository,
-            IMemoryCache cache,
+            IMemoryCacheWrapper cache,
             IHttpContextAccessor httpContextAccessor)
         {
             _customerRepository = customerRepository;
@@ -21,19 +21,19 @@ namespace DesignPatterns.Structural.Proxy
 
         public IList<Customer?> GetBlockedUsers()
         {
-            var httpContext = _httpContextAccessor.HttpContext;
+            var httpContext = _httpContextAccessor?.HttpContext;
 
             if(httpContext == null)
             {
                 return null!;
             }
 
-            if (httpContext.Request.Headers["x-role"] != "admin")
+            if(httpContext.Request.Headers["x-role"] != "admin")
             {
                 return null!;
             }
 
-            var blockedCustomers = _cache.GetOrCreate("blocked-customers", c =>
+            var blockedCustomers = (IList<Customer?>)_cache.GetOrCreate("blocked-customers", c =>
             {
                 return _customerRepository.GetBlockedUsers();
             });

@@ -2,7 +2,7 @@
 {
     public class CustomerRepository
     {
-        public IList<Customer> GetBlockedUsers()
+        public virtual IList<Customer> GetBlockedUsers()
         {
             return new List<Customer>
             {
