@@ -2,6 +2,12 @@
 {
     public class Quantity : IUnit
     {
+        public Quantity()
+        {
+            Minimum = 1;
+            Maximum = 200;
+        }
+
         public decimal Minimum { get; set; }
 
         public decimal Maximum { get; set; }
