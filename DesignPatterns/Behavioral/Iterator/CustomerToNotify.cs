@@ -3,11 +3,11 @@ using System.Collections;
 
 namespace DesignPatterns.Behavioral.Iterator
 {
-    public class CustomerToNotifyQueryModel : IEnumerable<KeyValuePair<string, string>>
+    public class CustomerToNotify : IEnumerable<KeyValuePair<string, string>>
     {
         private Dictionary<string, string> _customers;
 
-        public CustomerToNotifyQueryModel(IList<Customer> customer, string generatedBy)
+        public CustomerToNotify(IList<Customer> customer, string generatedBy)
         {
             _customers = customer.ToDictionary(c => c.FullName, c => c.Email);
             GeneratedAt = DateTime.Now;
@@ -23,7 +23,12 @@ namespace DesignPatterns.Behavioral.Iterator
                 }
                 return null!;
             }
+            set
+            {
+                _customers[customerFullName] = value;
+            }
         }
+
         public DateTime GeneratedAt { get; set; }
 
         public string GeneratedBy { get; set; }

@@ -30,7 +30,7 @@ namespace DesignPatterns.Tests.Strategy
         }
 
         [Test]
-        public void ShouldBeAble_ToParkTheCarInTheShoppingForSevenHoursAndWhenLeavingTheValueShouldBeTwentyTwoTenTheFirstThreeHoursAndAfterThreeForHour()
+        public void ShouldBeAbleToParkTheCarInTheShoppingForSevenHoursAndWhenLeavingTheValueShouldBeTwentyTwoTenTheFirstThreeHoursAndAfterThreeForHour()
         {
             var parkingLot = new ParkingLot("shopping", 500);
             var ticketDto = new Ticket

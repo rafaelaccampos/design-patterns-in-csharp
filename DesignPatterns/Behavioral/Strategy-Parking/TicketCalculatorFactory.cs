@@ -13,7 +13,7 @@
             {
                 "airport", new AiportCalculator()
             }
-    };
+        };
 
         public static ITicketCalculator Create(string location)
         {
