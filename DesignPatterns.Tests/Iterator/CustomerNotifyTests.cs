@@ -15,11 +15,11 @@ namespace DesignPatterns.Tests.Iterator
 
             var customerToNotify = new CustomerToNotify(customers, "me");
 
-            var notifiedCustomers = new List<string>();
+            var notifiedCustomers = new Dictionary<string, string>();
 
             foreach (var customer in customers)
             {
-                notifiedCustomers.Add(customer.FullName);
+                notifiedCustomers[customer.FullName] = customer.Email;
             }
 
            CollectionAssert.AreEquivalent(notifiedCustomers, customerToNotify);
