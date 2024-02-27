@@ -33,7 +33,7 @@
             foreach(var memento in _mementos)
             {
                 var items = string.Join(' ', memento.Items.Select(i => $"> Item: {i.Key}, Quantity: {i.Value}"));
-                Console.WriteLine($"Customer: {memento.CustomerId}, Items: {items}, Saved at: {memento.SavedAt}\n");
+                Console.WriteLine($"Customer: {memento.CustomerId}, Items: {items}\n");
             }
         }
     }
