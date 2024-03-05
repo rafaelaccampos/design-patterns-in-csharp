@@ -3,7 +3,7 @@
     public class ShoppingCartCaretaker
     {
         public readonly ShoppingCartOriginator Originator;
-        private readonly IList<IShoppingCartMemento> _mementos;
+        public readonly IList<IShoppingCartMemento> _mementos;
 
         public ShoppingCartCaretaker(ShoppingCartOriginator originator)
         {

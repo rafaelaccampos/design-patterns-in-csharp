@@ -25,7 +25,7 @@ namespace DesignPatterns.Tests.Memento
             careTaker.Backup();
             careTaker.Undo();
 
-            originator.Items.Count.Should().Be(2);
+            careTaker._mementos.Count.Should().Be(2);
         }
 
         [Test]
