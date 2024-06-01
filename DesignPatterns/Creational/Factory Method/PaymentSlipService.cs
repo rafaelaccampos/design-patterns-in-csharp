@@ -2,7 +2,7 @@
 
 namespace DesignPatterns.Creational.Factory_Method
 {
-    public class PaymentSlipService
+    public class PaymentSlipService : IPaymentService
     {
         public object Process(OrderItemInput orderInput)
         {
