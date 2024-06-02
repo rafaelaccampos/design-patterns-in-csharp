@@ -4,7 +4,7 @@ namespace DesignPatterns.Creational.Factory_Method
 {
     public class PaymentSlipService : IPaymentService
     {
-        public object Process(OrderItemInput orderInput)
+        public object Process(OrderItem orderInput)
         {
             return "Dados do boleto";
         }

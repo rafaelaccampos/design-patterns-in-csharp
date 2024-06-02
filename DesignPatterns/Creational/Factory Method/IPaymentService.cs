@@ -1,9 +1,7 @@
-﻿using DesignPatterns.Behavioral.Memento;
-
-namespace DesignPatterns.Creational.Factory_Method
+﻿namespace DesignPatterns.Creational.Factory_Method
 {
     public interface IPaymentService
     {
-        object Process(OrderItemInput orderItem);
+        object Process(OrderItem orderItem);
     }
 }
