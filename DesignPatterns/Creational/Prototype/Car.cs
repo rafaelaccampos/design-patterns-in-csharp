@@ -2,11 +2,11 @@
 {
     public class Car : IVehiclePrototype
     {
-        public string Model { get; private set; }
+        public string Model { get; set; }
 
-        public string Color { get; private set; }
+        public string Color { get; set; }
 
-        public int Seats { get; private set; }
+        public int Seats { get; set; }
 
         public Car(string model, string color, int seats)
         {
@@ -17,7 +17,7 @@
 
         public IVehiclePrototype Clone()
         {
-            return (IVehiclePrototype)this.MemberwiseClone();
+            return (IVehiclePrototype)MemberwiseClone();
         }
 
         public override string ToString()
