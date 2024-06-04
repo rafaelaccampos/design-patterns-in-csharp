@@ -97,6 +97,8 @@ $ git clone https://github.com/rafaelaccampos/design-patterns-in-csharp
 $ cd DesignPatterns
 # To install the dependencies
 $ dotnet restore
+
+
 ```
 
 To initiate the tests, follow the steps below:
