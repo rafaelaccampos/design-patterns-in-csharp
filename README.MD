@@ -1,11 +1,30 @@
 <h1 align="center">Design Patterns in C#</h1>
 
 ## 💻 Project
+Esse projeto tem como objetivo estudar Design Patterns implementados em C#. Ele contém teoria e a implementação do código.
 This project has the goal to study design patterns implemented in C#. It's contain theory and code implementation.
 
 ## Structural
 
 ### Adapter ###
+Adapter é um padrão de projeto estrutural que permite que classes incompatíveis se comuniquem. Ele também serve como uma camada anticorrupção que permite desacoplamento.
+Exemplos:
+- Diferentes implementações de gateway que tem que se comunicar com seu domínio que tem diferentes interfaces.
+- Quando você tem código legado e precisa adaptar para classes modernas.
+
+**PROS**
+- Responsabilidade Única: Separar diferentes dados das regras de negócio.
+- Princípio do aberto fechado: Você consegue introduzir novos adaptadores sem quebrar os clientes existentes, contanto que o contrato da interface seja preservada.
+
+**CONS**
+- A complexidade do código aumenta porque é introduzido muitas novas interfaces e classes.
+
+**Como implementa?**
+- Cria uma interface que descreve o contrato que outras classes devem seguir.
+- Criar as classes desejadas.
+- Criar o adaptador para as classes desejadas que vão implementar a interface.
+- Adicionar a referência da classe que você precisar adaptar na sua classe adaptadora. É comum usar o construtor, mas você pode chamar quando chamar o método das suas classes.
+
 Adapter is a structural design pattern that allow incompatible classes to communicate. It's serves as well to create an anticorruption layer and to promote uncouple.
 Examples: 
   - Different implementations of gateway that has to communicate with your domain that has different interface.
