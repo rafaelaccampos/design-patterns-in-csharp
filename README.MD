@@ -98,11 +98,31 @@ Examples:
 - Clients should be ready to handle the following scenarios: the chain may consit of a single link, some request may not reach the end of the chain and others may reach the end of the chain unhandled.
 
 ### Visitor ###
+- Visitor é uma padrão de projeto comportamental que executa uma operação em uma lista de objetos diferentes da mesma classe mãe.
+- É usado quando você tem diferentes objetos dentro de uma lista ou árvore.
+
+**PROS**
+- Princípio do aberto fechado: porque você pode introduzir novos comportamentos para objetos específicos sem mudar a classe pai.
+- Princípio da responsabilidade única: porque você pode separar comportamento com sua classe respectiva.
+- Visitor pode acumular informações e ser muito útil quando se trabalha com nós de árvore.
+
+**CONS**
+- Você precisa atualizar todos os visitors quando uma classe é modificada na hierarquia.
+- Visitors podem não ter os acessos necessários para campos privados ou métodos.
+
+**Como implementar?**
+- Declare uma interface visitor com métodos visits, uma para elemento concreto da classe.
+- Declare uma classe abstrata ou uma interface com os métodos Accept que irão receber objetos visitors como argumento.
+- Implemente os métodos Accept em todas as classes concretas. Esses métodos irão redirecionar cada chamada do objeto visitor como um argumento.
+- As classes de elementos somente trabalham com o visitor via interface do visitor. Visitors devem saber de todas os elementos concretos da classe como tipos de parâmetro.
+- Para cada comportamento na lista ou árvore, você tem que criar uma classe concreta do visitor e implementar os métodos visits.
+- O cliente deve criar objetos visitors e passá-los para elementos por meio de métodos de aceitação.
+
 - Visitor is a behavioral design patterns that executes a operation in a list of different objects from the same mother class.
 - It's used when you have different implementation for each object inside a list or a tree.
 
 **PROS**:
-- Open closed principle because you introduce new behavior only for the specific objects without changing the father class.
+- Open closed principle: because you introduce new behavior only for the specific objects without changing the father class.
 - Single Responsability Principle, because you separate behavior with the corresponding class.
 - Visitor can accumulate information and be very useful when working with node trees.
 
