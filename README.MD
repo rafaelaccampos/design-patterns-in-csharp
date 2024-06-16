@@ -48,13 +48,34 @@ Examples:
 ## Behavioral
 
 ### Chain of Responsability ###
+- Cadeia de responsabilidade é um design pattern comportamental que permite que passem as requisições adiante, como uma cadeia. E cada requisição/handle decide o que vai ser feito na cadeia.
+- Especialmente útil quando tem que executar passos em sequência.
+- Os handlers são conectados a uma cadeia e cada conexão do handler tem um campo que guarda a referência para o próximo handler.
+Examples:
+- Quando você quer oferecer um cartão de crédio, mas precisa executar diversas validações antes para saber se a pessoa é elegível.
+- Quando você precisa verificar se os usuários estão autenticados e autorizados para acessar o sistema. Então, você pode usar cadeia de responsabilidade, quando o request é criado e executado em sequência o processo de autenticação.
+
+**PROS**
+- Controlar a ordem de execução do request.
+- Responsabilidade Única: Desacople classes que invocam operação de classes que performam operações.
+- Princípio do aberto fechado: Introduza novos handlers sem quebrar o código cliente já existente.
+
+**CONS**
+- Risco de criar uma cadeia infinita.
+- Depuração pode ser mais difícil.
+- A configuração da cadeia pode ser complexa.
+
+**Como implementar?**
+- Declare a interface do handler e descreva a assinatura do seu método para lidar com as requisições do handler. Você pode converter as requisições em um objeto e passar o método do handler como um argumento.
+- Para eliminar código duplicado em handlers concretos, você pode criar uma classe abstrata base, derivada da interface do handler. Essa classe contém uma referência ao **próximo handler** na cadeia. Considere fazer essa classe imutável, mas se você precisa modificar cadeias em tempo de execução, você precisa definir um setter para alterar o campo de referência. Além disso, você vai precisar criar um comportamento padrão para o handler
+
 - Chain of responsability is a behavioral design pattern that allows you to pass requests forward, like a chain. And each request/handle decides what to do next in the chain.
 - Especially useful when it has to do steps in sequence.
 - Chain of responsability transforms behaviors in objects called Handlers.
 - The handlers are linked in a chain and each linked handler has a field for the next reference to the handler.
 Examples:
-  - When you want to offer a person a credit card, but before you have to check if she's eligible.
-  - When you have to check if users are authenticated and authorized for access a system. So, you can use Chain of Responsabily, when the request is created and execute in sequence the authentication and authorization process to acess the system.
+  - When you want to offer a person a credit card, but before you have to check if it's eligible.
+  - When you have to check if users are authenticated and authorized for access a system. So, you can use Chain of Responsability, when the request is created and execute in sequence the authentication and authorization process to acess the system.
 
 **PROS**:
  - Control the order of request handling.
