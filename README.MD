@@ -35,8 +35,131 @@ namespace DesignPatterns.Structural.Adapter.Adapter_Transaction
 ```
 
 - Criar as classes desejadas.
+
+```
+    public class PaypalTransaction
+    {
+        public PaypalTransaction(int id, int amount, string status)
+        {
+            Id = id;
+            Amount = amount;
+            Status = status;
+        }
+
+        public int Id { get; private set; }
+        public decimal Amount { get; private set; }
+        public string Status { get; private set; }
+    }
+```
+```
+    public class StripeTransaction
+    {
+        public StripeTransaction(string code, decimal grossAmount, int situation)
+        {
+            Code = code;
+            GrossAmount = grossAmount;
+            Situation = situation;
+        }
+
+        public string Code { get; private set; }
+        public decimal GrossAmount { get; private set; }
+        public int Situation { get; private set; }
+    }
+```
 - Criar o adaptador para as classes desejadas que vão implementar a interface.
+
+```
+    public class PayPalTransactionAdapter : ITransaction
+    {
+        public PayPalTransactionAdapter(PaypalTransaction payPalTransaction)
+        {
+            TrackNumber = payPalTransaction.Id.ToString();
+            Amount = payPalTransaction.Amount;
+            Status = ConvertStatus(payPalTransaction.Status);
+        }
+
+        public string TrackNumber { get; private set; }
+
+        public decimal Amount { get; private set; }
+
+        public string Status { get; private set; }
+
+        public string ConvertStatus(string status)
+        {
+            switch (status)
+            {
+                case "P":
+                    return "waiting_payment";
+                case "S":
+                    return "paid";
+                case "F":
+                    return "refunded";
+                default:
+                    return string.Empty;
+            }
+        }
+    }
+```
+```
+        public StripeTransactionAdapter(StripeTransaction stripeTransaction)
+        {
+            TrackNumber = stripeTransaction.Code;
+            Amount = stripeTransaction.GrossAmount;
+            Status = ConvertStatus(stripeTransaction.Situation);
+        }
+
+        public string TrackNumber { get; private set; }
+
+        public decimal Amount { get; private set; }
+
+        public string Status { get; private set; }
+
+        public string ConvertStatus(int status)
+        {
+            switch (status)
+            {
+                case 1:
+                    return "waiting_payment";
+                case 2:
+                    return "paid";
+                case 3:
+                    return "cancelled";
+                default:
+                    return string.Empty;
+            }
+        }
+```
 - Adicionar a referência da classe que você precisar adaptar na sua classe adaptadora. É comum usar o construtor, mas você pode chamar quando chamar o método das suas classes.
+
+```
+        [Test]
+        public void ShouldBeAbleToCreateTransactionFromStripe()
+        {
+            var stripeTransaction = new StripeTransaction("AHN765NHD89", 1000, 2);
+            var transaction = new StripeTransactionAdapter(stripeTransaction);
+
+            using (new AssertionScope())
+            {
+                transaction.TrackNumber.Should().Be("AHN765NHD89");
+                transaction.Amount.Should().Be(1000);
+                transaction.Status.Should().Be("paid");
+            }
+        }
+
+        [Test]
+        public void ShouldBeAbleToCreateTransactionFromPaypal()
+        {
+            var payPalTransaction = new PaypalTransaction(7897897, 1000, "S");
+            var transaction = new PayPalTransactionAdapter(payPalTransaction);
+
+            using (new AssertionScope())
+            {
+                transaction.TrackNumber.Should().Be("7897897");
+                transaction.Amount.Should().Be(1000);
+                transaction.Status.Should().Be("paid");
+            }
+        }
+```
 ---
 
 ## Behavioral
