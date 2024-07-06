@@ -13,7 +13,7 @@ Exemplos:
 - Quando você tem código legado e precisa adaptar para classes modernas.
 
 **PROS**
-- Responsabilidade Única: Separar diferentes dados das regras de negócio.
+- Responsabilidade única: Separar diferentes dados das regras de negócio.
 - Princípio do aberto fechado: Você consegue introduzir novos adaptadores sem quebrar os clientes existentes, contanto que o contrato da interface seja preservada.
 
 **CONS**
@@ -21,6 +21,19 @@ Exemplos:
 
 **Como implementa?**
 - Cria uma interface que descreve o contrato que outras classes devem seguir.
+
+```
+namespace DesignPatterns.Structural.Adapter.Adapter_Transaction
+{
+    public interface ITransaction
+    {
+        public string TrackNumber { get; }
+        public decimal Amount { get; }
+        public string Status { get; }
+    }
+}
+```
+
 - Criar as classes desejadas.
 - Criar o adaptador para as classes desejadas que vão implementar a interface.
 - Adicionar a referência da classe que você precisar adaptar na sua classe adaptadora. É comum usar o construtor, mas você pode chamar quando chamar o método das suas classes.
