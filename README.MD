@@ -22,7 +22,7 @@ Exemplos:
 **Como implementa?**
 - Cria uma interface que descreve o contrato que outras classes devem seguir.
 
-```
+```csharp
 namespace DesignPatterns.Structural.Adapter.Adapter_Transaction
 {
     public interface ITransaction
@@ -32,7 +32,7 @@ namespace DesignPatterns.Structural.Adapter.Adapter_Transaction
         public string Status { get; }
     }
 }
-```
+
 
 - Criar as classes desejadas.
 
