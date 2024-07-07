@@ -347,6 +347,7 @@ namespace DesignPatterns.Tests.Chain_of_Responsability
 ### Visitor ###
 - Visitor é uma padrão de projeto comportamental que executa uma operação em uma lista de objetos diferentes da mesma classe mãe.
 - É usado quando você tem diferentes objetos dentro de uma lista ou árvore.
+- Visitor permite que você separe o comportamento/lógica do objeto em que ele opera.
 
 **PROS**
 - Princípio do aberto fechado: porque você pode introduzir novos comportamentos para objetos específicos sem mudar a classe pai.
