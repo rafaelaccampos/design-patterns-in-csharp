@@ -271,7 +271,7 @@ namespace DesignPatterns.Behavioral.Chain_of_Responsability_Adm
 ```
 - Clientes devem estar preparados para os seguintes cenários: a cadeia consiste de um único link, aguns request não devem seguir ao fim da cadeia e outras podem chegar ao fim da cadeia sem tratamento.
 
-```
+```csharp
 using DesignPatterns.Behavioral.Chain_of_Responsability_Adm;
 using FluentAssertions;
 
