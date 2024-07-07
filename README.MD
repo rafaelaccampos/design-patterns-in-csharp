@@ -168,7 +168,7 @@ namespace DesignPatterns.Structural.Adapter.Adapter_Transaction
 - Cadeia de responsabilidade é um design pattern comportamental que permite que passem as requisições adiante, como uma cadeia. E cada requisição/handle decide o que vai ser feito na cadeia.
 - Especialmente útil quando tem que executar passos em sequência.
 - Os handlers são conectados a uma cadeia e cada conexão do handler tem um campo que guarda a referência para o próximo handler.
-Examples:
+Exemplos:
 - Quando você quer oferecer um cartão de crédio, mas precisa executar diversas validações antes para saber se a pessoa é elegível.
 - Quando você precisa verificar se os usuários estão autenticados e autorizados para acessar o sistema. Então, você pode usar cadeia de responsabilidade, quando o request é criado e executado em sequência o processo de autenticação.
 
