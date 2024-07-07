@@ -32,7 +32,7 @@ namespace DesignPatterns.Structural.Adapter.Adapter_Transaction
         public string Status { get; }
     }
 }
-
+```
 
 - Criar as classes desejadas.
 
