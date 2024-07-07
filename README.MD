@@ -359,11 +359,213 @@ namespace DesignPatterns.Tests.Chain_of_Responsability
 
 **Como implementar?**
 - Declare uma interface visitor com métodos visits, uma para elemento concreto da classe.
+
+```csharp
+namespace DesignPatterns.Behavioral.Visitor_Marketing
+{
+    public interface INotificationVisitor
+    {
+        string Visit(SmsMessage message);
+
+        string Visit(EmailMessage message);
+    }
+}
+```
+
 - Declare uma classe abstrata ou uma interface com os métodos Accept que irão receber objetos visitors como argumento.
+
+```csharp
+namespace DesignPatterns.Behavioral.Visitor_Marketing
+{
+    public interface IMarketingMessage
+    {
+        string From { get; }
+
+        string To { get; }
+
+        string Content { get; }
+
+        string Accept(INotificationVisitor visitor);
+    }
+}
+```
+
 - Implemente os métodos Accept em todas as classes concretas. Esses métodos irão redirecionar cada chamada do objeto visitor como um argumento.
+
+```csharp
+namespace DesignPatterns.Behavioral.Visitor_Marketing
+{
+    public class EmailMessage : IMarketingMessage
+    {
+        public EmailMessage(string from, string to, string subject, string content)
+        {
+            From = from;
+            To = to;
+            Subject = subject;
+            Content = content;
+        }
+
+        public string From { get; private set; }
+
+        public string To { get; private set; }
+
+        public string Subject { get; private set; }
+
+        public string Content { get; private set; }
+
+        public string Accept(INotificationVisitor visitor)
+        {
+            return visitor.Visit(this);
+        }
+    }
+}
+
+namespace DesignPatterns.Behavioral.Visitor_Marketing
+{
+    public class SmsMessage : IMarketingMessage
+    {
+        public SmsMessage(string from, string to, string content)
+        {
+            From = from;
+            To = to;
+            Content = content;
+        }
+
+        public string From { get; private set; }
+
+        public string To { get; private set; }
+
+        public string Content { get; private set; }
+
+        public string Accept(INotificationVisitor visitor)
+        {
+            return visitor.Visit(this);
+        }
+    }
+}
+```
+
 - As classes de elementos somente trabalham com o visitor via interface do visitor. Visitors devem saber de todas os elementos concretos da classe como tipos de parâmetro.
 - Para cada comportamento na lista ou árvore, você tem que criar uma classe concreta do visitor e implementar os métodos visits.
+
+```csharp
+namespace DesignPatterns.Behavioral.Visitor_Marketing
+{
+    public class NotificationVisitor : INotificationVisitor
+    {
+        public string Visit(SmsMessage message)
+        {
+            return $"SMS message: From: {message.From}, To: {message.To}, Content: {message.Content}";
+        }
+
+        public string Visit(EmailMessage message)
+        {
+            return $"Email message: From: {message.From}, Subject: {message.Subject}, To: {message.To}, Content: {message.Content}";
+        }
+    }
+}
+namespace DesignPatterns.Behavioral.Visitor_Marketing
+{
+    public class NotificationService
+    {
+        private readonly INotificationVisitor _notificationVisitor;
+
+        public NotificationService(INotificationVisitor notificationVisitor)
+        {
+            _notificationVisitor = notificationVisitor;
+        }
+
+        public IEnumerable<string> Notify(IList<IMarketingMessage> messages)
+        {
+            var visitor = _notificationVisitor;
+
+            foreach (var message in messages)
+            {
+                yield return message.Accept(visitor);
+            }
+        }
+    }
+}
+```
 - O cliente deve criar objetos visitors e passá-los para elementos por meio de métodos de aceitação.
+
+```csharp
+using DesignPatterns.Behavioral.Visitor_Marketing;
+using FluentAssertions;
+using FluentAssertions.Execution;
+
+namespace DesignPatterns.Tests.Visitor
+{
+    public class NotificationServiceTests
+    {
+        [Test]
+        public void ShouldBeAbleToCreateEmailMessageNotification()
+        {
+            var emailMessages = new List<IMarketingMessage>
+            {
+                new EmailMessage("Rafa", "T", "BFF", "We need to go out sometime!"),
+            };
+
+            var notificationVisitor = new NotificationVisitor();
+            var notificationService = new NotificationService(notificationVisitor);
+            var notifications = notificationService.Notify(emailMessages).ToList();
+
+            var expectedEmailMessage = "Email message: From: Rafa, Subject: BFF, To: T, Content: We need to go out sometime!";
+            using (new AssertionScope())
+            {
+                notifications.Should().BeEquivalentTo(expectedEmailMessage);
+            }
+        }
+
+        [Test]
+        public void ShouldBeAbleToCreateSMSMessageNotification()
+        {
+            var smsMessages = new List<IMarketingMessage>
+            {
+                new SmsMessage("T", "Rafa", "Definitely, we need to schedule!"),
+            };
+
+            var notificationVisitor = new NotificationVisitor();
+            var notificationService = new NotificationService(notificationVisitor);
+            var notifications = notificationService.Notify(smsMessages).ToList();
+
+            var expectedSmsMessage = "SMS message: From: T, To: Rafa, Content: Definitely, we need to schedule!";
+            using (new AssertionScope())
+            {
+                notifications.Should().BeEquivalentTo(expectedSmsMessage);
+            }
+        }
+
+        [Test]
+        public void ShouldBeAbleToCreateEmailAndSmsMessagesNotifications()
+        {
+            var emailMessage = new EmailMessage("Rafa", "T", "BFF", "We need to go out sometime!");
+            var smsMessage = new SmsMessage("T", "Rafa", "Definitely, we need to schedule!");
+
+            var messages = new List<IMarketingMessage>
+            {
+                emailMessage,
+                smsMessage
+            };
+
+            var notificationVisitor = new NotificationVisitor();
+            var notificationService = new NotificationService(notificationVisitor);
+            var notifications = notificationService.Notify(messages).ToList();
+
+            var expectedMessages = new List<string>
+            {
+                { "Email message: From: Rafa, Subject: BFF, To: T, Content: We need to go out sometime!" },
+                { "SMS message: From: T, To: Rafa, Content: Definitely, we need to schedule!" },
+            };
+
+            using (new AssertionScope())
+            {
+                notifications.Should().Contain(expectedMessages);
+            }
+        }
+    }
+}
+```
 
 ## 🧪 Techs
 
