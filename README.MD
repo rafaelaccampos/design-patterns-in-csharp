@@ -36,7 +36,7 @@ namespace DesignPatterns.Structural.Adapter.Adapter_Transaction
 
 - Criar as classes desejadas.
 
-```
+```csharp
     public class PaypalTransaction
     {
         public PaypalTransaction(int id, int amount, string status)
@@ -51,7 +51,7 @@ namespace DesignPatterns.Structural.Adapter.Adapter_Transaction
         public string Status { get; private set; }
     }
 ```
-```
+```csharp
     public class StripeTransaction
     {
         public StripeTransaction(string code, decimal grossAmount, int situation)
@@ -68,7 +68,7 @@ namespace DesignPatterns.Structural.Adapter.Adapter_Transaction
 ```
 - Criar o adaptador para as classes desejadas que vão implementar a interface.
 
-```
+```csharp
     public class PayPalTransactionAdapter : ITransaction
     {
         public PayPalTransactionAdapter(PaypalTransaction payPalTransaction)
@@ -100,7 +100,7 @@ namespace DesignPatterns.Structural.Adapter.Adapter_Transaction
         }
     }
 ```
-```
+```csharp
         public StripeTransactionAdapter(StripeTransaction stripeTransaction)
         {
             TrackNumber = stripeTransaction.Code;
@@ -131,7 +131,7 @@ namespace DesignPatterns.Structural.Adapter.Adapter_Transaction
 ```
 - Adicionar a referência da classe que você precisar adaptar na sua classe adaptadora. É comum usar o construtor, mas você pode chamar quando chamar o método das suas classes.
 
-```
+```csharp
         [Test]
         public void ShouldBeAbleToCreateTransactionFromStripe()
         {
