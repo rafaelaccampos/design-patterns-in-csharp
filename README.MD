@@ -174,7 +174,7 @@ Examples:
 
 **PROS**
 - Controlar a ordem de execução do request.
-- Responsabilidade Única: Desacople classes que invocam operação de classes que performam operações.
+- Responsabilidade única: Desacople classes que invocam operação de classes que performam operações.
 - Princípio do aberto fechado: Introduza novos handlers sem quebrar o código cliente já existente.
 
 **CONS**
@@ -183,10 +183,166 @@ Examples:
 - A configuração da cadeia pode ser complexa.
 
 **Como implementar?**
-- Declare a interface do handler e descreva a assinatura do seu método para lidar com as requisições do handler. Você pode converter as requisições em um objeto e passar o método do handler como um argumento.
+- Declare a interface do handler e descreva a assinatura do seu método para lidar com as requisições do handler. Você pode converter as requisições em um objeto e passar no método do handler como um argumento.
+
+```csharp
+namespace DesignPatterns.Behavioral.Chain_of_Responsability_Adm
+{
+    public interface IHandler
+    {
+        void Handle(IList<Bill> bills, int amount);
+    }
+}
+```
+
 - Para eliminar código duplicado em handlers concretos, você pode criar uma classe abstrata base, derivada da interface do handler. Essa classe contém uma referência ao **próximo handler** na cadeia. Considere fazer essa classe imutável, mas se você precisa modificar cadeias em tempo de execução, você precisa definir um setter para alterar o campo de referência. Além disso, você vai precisar criar um comportamento padrão para o método do handler, que é passar o request para o próximo objeto a menos que não haja objeto. Handlers concretos poderão usar isso chamando o método pai.
+
+```csharp
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace DesignPatterns.Behavioral.Chain_of_Responsability_Adm
+{
+    public class BillHandler : IHandler
+    {
+        private readonly IHandler? _nextHandler;
+        private readonly int _type;
+       
+        public BillHandler(IHandler? nextHandler, int type)
+        {
+            _nextHandler = nextHandler;
+            _type = type;
+        }
+
+        public void Handle(IList<Bill> bills, int amount)
+        {
+            decimal notes = amount / _type;
+            var count = (int)Math.Floor(notes);
+            var bill = new Bill
+            {
+                Count = count,
+                Type = _type,
+            };
+
+            bills.Add(bill);
+            var remaining = amount % _type;
+
+            if (_nextHandler != null)
+            {
+                _nextHandler.Handle(bills, remaining);
+                return;
+            }
+            if (remaining > 0) throw new Exception("Without available notes!");
+        }
+    }
+}
+```
+
 - Você pode criar suas próprias cadeias, receber cadeias pré construídas de outros objetos ou implementar algumas classes factory para construir a cadeia.
+
+```csharp
+namespace DesignPatterns.Behavioral.Chain_of_Responsability_Adm
+{
+    public class Bill
+    {
+        public int Type { get; set; }
+        public int Count { get; set; }
+    }
+}
+
+namespace DesignPatterns.Behavioral.Chain_of_Responsability_Adm
+{
+    public class Atm
+    {
+        private readonly IHandler _handler;
+
+        public Atm(IHandler handler)
+        {
+            _handler = handler;
+        }
+
+        public IList<Bill> Withdraw(int amount)
+        {
+            var bills = new List<Bill>();
+            _handler.Handle(bills, amount);
+            return bills;
+        }
+    }
+}
+```
 - Clientes devem estar preparados para os seguintes cenários: a cadeia consiste de um único link, aguns request não devem seguir ao fim da cadeia e outras podem chegar ao fim da cadeia sem tratamento.
+
+```
+using DesignPatterns.Behavioral.Chain_of_Responsability_Adm;
+using FluentAssertions;
+
+namespace DesignPatterns.Tests.Chain_of_Responsability
+{
+    public class AtmTests
+    {
+        [Test]
+        public void ShouldBeAbleToRetrieveMoneyWithAllNotes()
+        {
+            var handler1 = new BillHandler(null, 1);
+            var handler2 = new BillHandler(handler1, 2);
+            var handler5 = new BillHandler(handler2, 5);
+            var handler10 = new BillHandler(handler5, 10);
+            var handler20 = new BillHandler(handler10, 20);
+            var handler50 = new BillHandler(handler20, 50);
+            var handler100 = new BillHandler(handler50, 100);
+            var atm = new Atm(handler100);
+
+            var bills = atm.Withdraw(978);
+
+            var expectedBills = new List<Bill>
+            {
+                { new Bill { Count = 9, Type = 100 } },
+                { new Bill { Count = 1, Type = 50 } },
+                { new Bill { Count = 1, Type = 20 } },
+                { new Bill { Count = 0, Type = 10 } },
+                { new Bill { Count = 1, Type = 5 } },
+                { new Bill { Count = 1, Type = 2 } },
+                { new Bill { Count = 1, Type = 1 } },
+            };
+
+            bills.Should().BeEquivalentTo(expectedBills);
+        }
+
+        [Test]
+        public void ShouldBeAbleToRetrieveMoneyWithOnlyOneNotes()
+        {
+            var handler1 = new BillHandler(null, 1);
+            var atm = new Atm(handler1);
+
+            var bills = atm.Withdraw(978);
+
+            var expectedBills = new List<Bill>
+            {
+                { new Bill { Count = 978, Type = 1 } },
+            };
+
+            bills.Should().BeEquivalentTo(expectedBills);
+        }
+
+        [Test]
+        public void ShouldBeAbleToRetrieveMoneyWithOnlyFiveAndTenNotes()
+        {
+            var handler5 = new BillHandler(null, 5);
+            var handler10 = new BillHandler(handler5, 10);
+
+            var atm = new Atm(handler10);
+            var bills = atm.Withdraw(500);
+
+            var expectedBills = new List<Bill>
+            {
+                { new Bill { Count = 50, Type = 10 } },
+                { new Bill { Count = 0, Type = 5 } },
+            };
+
+            bills.Should().BeEquivalentTo(expectedBills);
+        }
+    }
+}
+```
 
 ### Visitor ###
 - Visitor é uma padrão de projeto comportamental que executa uma operação em uma lista de objetos diferentes da mesma classe mãe.
