@@ -6,15 +6,20 @@ This project has the goal to study design patterns implemented in C#. It's conta
 
 ## Creational
 
-## Builder ##
-Builder é um padrão de projeto criacional
+### Builder ###
+- Builder é um padrão de projeto criacional que permite que você crie objetos complexos em várias etapas.
+- Especialmente útil quando se tem muitos parâmetros opcionais ou quando você precisa criar o objeto por partes.
+
+**Exemplos**:
+- Formulários muito grandes que são construídos em diversas etapas.
+- Na criação de objetos de testes em que você só precisa criar com parâmetros específicos.
 
 **PROS**
 - Responsabilidade única: Separar diferentes dados das regras de negócio.
 - Princípio do aberto fechado: Você consegue introduzir novos adaptadores sem quebrar os clientes existentes, contanto que o contrato da interface seja preservada.
 
 **CONS**
-- A complexidade do código aumenta porque é introduzido muitas novas interfaces e classes.
+- A complexidade do código aumenta porque você precisa criar múltiplas classes.
 
 **Como implementa?**
 - Cria uma interface que descreve o contrato que outras classes devem seguir.
