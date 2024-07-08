@@ -23,7 +23,149 @@ This project has the goal to study design patterns implemented in C#. It's conta
 - A complexidade do código aumenta porque você precisa criar múltiplas classes.
 
 **Como implementa?**
-- Cria uma interface que descreve o contrato que outras classes devem seguir.
+- Identifique claramente todos os passos de construção para construir todas as representações do produto disponíveis.
+- Declare esses passos na interface do builder.
+- Crie uma classe construtora concreta para cada uma das representações do produto e implemente suas etapas de construção.
+- Implemente um método (nesse caso, Generate) para buscar o resultado da construção.
+
+```csharp
+using System.Text;
+
+namespace DesignPatterns.Creational.Builder
+{
+    public class ItemBuilder
+    {
+        public ItemBuilder(
+            int idItem, 
+            string category, 
+            string description, 
+            decimal price)
+        {
+            IdItem = idItem;
+            Category = category;
+            Description = description;
+            Price = price;
+        }
+
+        public int IdItem { get; private set; }
+
+        public string Category { get; private set; }
+
+        public string Description { get; private set; }
+
+        public decimal Price { get; private set; }
+
+        public decimal Width { get; private set; }
+
+        public decimal Height { get; private set; }
+
+        public decimal Length { get; private set; }
+
+        public decimal Weight { get; private set; }
+
+
+        public ItemBuilder WithWidth(decimal width)
+        {
+            Width = width;
+            return this;
+        }
+
+        public ItemBuilder WithHeight(decimal height)
+        {
+            Height = height;
+            return this;
+        }
+
+        public ItemBuilder WithLenght(decimal lenght)
+        {
+            Length = lenght;
+            return this;
+        }
+
+        public ItemBuilder WithWeight(decimal weight)
+        {
+            Weight = weight;
+            return this;
+        }
+
+        public Item Generate()
+        {
+            var item = new Item(this);
+            return item;
+        }
+    }
+}
+
+namespace DesignPatterns.Creational.Builder
+{
+    public class Item
+    {
+        public Item(ItemBuilder itemBuilder)
+        {
+            IdItem = itemBuilder.IdItem;
+            Category = itemBuilder.Category;
+            Description = itemBuilder.Description;
+            Width = itemBuilder.Width;
+            Height = itemBuilder.Height;
+            Length = itemBuilder.Length;
+            Weight = itemBuilder.Weight;
+        }
+
+        public int IdItem { get; private set; }
+
+        public string Category { get; private set; }
+        
+        public string Description { get; private set; }
+        
+        public decimal? Width { get; private set; }
+        
+        public decimal? Height { get; private set; }
+        
+        public decimal? Length { get; private set; }
+        
+        public decimal? Weight { get; private set; }
+
+        public decimal? GetVolume()
+        {
+            if(Width == null || Height == null || Length == null) return 0;
+
+            return Width / 100 * Height / 100 * Length / 100;
+        }
+
+        public decimal? GetDensity()
+        {
+            if(Width == null || Height == null || Length == null || Height == null || Weight == null) return 0;
+
+            return Weight / GetVolume();
+        }
+    }
+}
+
+using DesignPatterns.Creational.Builder;
+using FluentAssertions;
+
+namespace DesignPatterns.Tests.Builder
+{
+    public class ItemTests
+    {
+        [Test]
+        public void ShouldBeAbleToCreateAnItem()
+        {
+            var item = new ItemBuilder(1, "Instrumentos Musicais", "Guitarra", 1000)
+                .WithWidth(100)
+                .WithHeight(50)
+                .WithLenght(30)
+                .WithWeight(3)
+                .Generate();
+
+            var volume = item.GetVolume();
+
+            volume.Should().Be(0.15M);
+        }
+    }
+}
+```
+- 
 
 ## Structural
 
