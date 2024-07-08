@@ -15,7 +15,8 @@ This project has the goal to study design patterns implemented in C#. It's conta
 - Na criação de objetos de testes em que você só precisa criar com parâmetros específicos.
 
 **PROS**
-- Responsabilidade única: Separar diferentes dados das regras de negócio.
+- Você consegue construir objetos complexos passo a passo.
+- Responsabilidade única: Separar construções complexas de objetos de lógica de negócios.
 - Princípio do aberto fechado: Você consegue introduzir novos adaptadores sem quebrar os clientes existentes, contanto que o contrato da interface seja preservada.
 
 **CONS**
