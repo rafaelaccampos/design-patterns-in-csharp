@@ -4,6 +4,21 @@
 Esse projeto tem como objetivo estudar Design Patterns implementados em C#. Ele contém teoria e a implementação do código.
 This project has the goal to study design patterns implemented in C#. It's contain theory and code implementation.
 
+## Creational
+
+## Builder ##
+Builder é um padrão de projeto criacional
+
+**PROS**
+- Responsabilidade única: Separar diferentes dados das regras de negócio.
+- Princípio do aberto fechado: Você consegue introduzir novos adaptadores sem quebrar os clientes existentes, contanto que o contrato da interface seja preservada.
+
+**CONS**
+- A complexidade do código aumenta porque é introduzido muitas novas interfaces e classes.
+
+**Como implementa?**
+- Cria uma interface que descreve o contrato que outras classes devem seguir.
+
 ## Structural
 
 ### Adapter ###
