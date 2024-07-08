@@ -17,7 +17,8 @@ This project has the goal to study design patterns implemented in C#. It's conta
 **PROS**
 - Você consegue construir objetos complexos passo a passo.
 - Responsabilidade única: Separar construções complexas de objetos de lógica de negócios.
-- Princípio do aberto fechado: Você consegue introduzir novos adaptadores sem quebrar os clientes existentes, contanto que o contrato da interface seja preservada.
+- Você pode reusar os builders para diferentes criações de produto.
+- Evita o code smell telescoping constructor. O code smell telescoping constructor é quando uma classe tem vários construtores com muitos parâmetros e isso dificulta saber a ordem dos parâmetros, bem como qual é o construtor certo a ser utilizado.
 
 **CONS**
 - A complexidade do código aumenta porque você precisa criar múltiplas classes.
