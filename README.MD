@@ -165,12 +165,11 @@ namespace DesignPatterns.Tests.Builder
     }
 }
 ```
-- 
 
 ## Structural
 
 ### Adapter ###
-Adapter é um padrão de projeto estrutural que permite que classes incompatíveis se comuniquem. Ele também serve como uma camada anticorrupção que permite desacoplamento.
+- Adapter é um padrão de projeto estrutural que permite que classes incompatíveis se comuniquem. Ele também serve como uma camada anticorrupção que permite desacoplamento.
 **Exemplos**:
 - Diferentes implementações de gateway que tem que se comunicar com seu domínio que tem diferentes interfaces.
 - Quando você tem código legado e precisa adaptar para classes modernas.
