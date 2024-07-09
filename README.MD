@@ -168,7 +168,7 @@ namespace DesignPatterns.Tests.Builder
 ```
 
 ### Factory Method ###
-- Factory Method é um padrão de projeto criacional que provê uma interface para criação de um objeto, mas permite que as subclasses alterem o tipo do objeto que vai ser executado, ou seja, delega a responsabilidade de instanciar objetos para as classes concretas.
+- Factory Method é um padrão de projeto criacional que provê uma interface comum para criação de um objeto, e permite que as subclasses alterem o tipo do objeto que vai ser executado, ou seja, delega a responsabilidade de instanciar objetos para as classes concretas.
 - Especialmente útil quando há algum processamento genérico em uma classe, mas as subclasses são decididas dinamicamente no período de execução.
 - Geralmente usado quando existe comportamento polimórfico.
 
@@ -183,6 +183,9 @@ namespace DesignPatterns.Tests.Builder
 
 **CONS**
 - O código pode ser mais complexo já que você precisa criar novas classes para cada tipo de objeto a ser instanciado para implementar o padrão de projeto.
+
+**Como implementa?**
+- Faça todas as classes que criam o produto
 
 
 ## Structural
