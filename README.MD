@@ -167,10 +167,29 @@ namespace DesignPatterns.Tests.Builder
 }
 ```
 
+### Factory Method ###
+- Factory Method é um padrão de projeto criacional que provê uma interface para criação de um objeto, mas permite que as subclasses alterem o tipo do objeto que vai ser executado, ou seja, delega a responsabilidade de instanciar objetos para as classes concretas.
+- Especialmente útil quando há algum processamento genérico em uma classe, mas as subclasses são decididas dinamicamente no período de execução.
+- Geralmente usado quando existe comportamento polimórfico.
+
+**Exemplos**:
+- Uma aplicação que precisa gerenciar diferents tipos de documento (Word, PDF).
+- Uma aplicação que precisa gerenciar diferentes tipos de pagamento (Boleto, Cartão de Crédito, PayPal).
+
+**PROS**
+- Você evita um acoplamento forte entre a criação dos objetos e as classes concretas.
+- Princípio da responsabilidade única: Você consegue a criação do objeto em um único lugar.
+- Princípio do aberto fechado: Você consegue introduzir novos objetos sem criar os já existentes.
+
+**CONS**
+- O código pode ser mais complexo já que você precisa criar novas classes para cada tipo de objeto a ser instanciado para implementar o padrão de projeto.
+
+
 ## Structural
 
 ### Adapter ###
 - Adapter é um padrão de projeto estrutural que permite que classes incompatíveis se comuniquem. Ele também serve como uma camada anticorrupção que permite desacoplamento.
+
 **Exemplos**:
 - Diferentes implementações de gateway que tem que se comunicar com seu domínio que tem diferentes interfaces.
 - Quando você tem código legado e precisa adaptar para classes modernas.
