@@ -751,6 +751,10 @@ namespace DesignPatterns.Tests.Visitor
         }
     }
 }
+
+### Template Method ###
+- Geralmente usado quando as subclasses tem códigos muito semelhantes (quando existe um padrão).
+
 ```
 
 ## 🧪 Techs
