@@ -185,8 +185,168 @@ namespace DesignPatterns.Tests.Builder
 - O código pode ser mais complexo já que você precisa criar novas classes para cada tipo de objeto a ser instanciado para implementar o padrão de projeto.
 
 **Como implementa?**
-- Faça todas as classes que criam o produto
+- Defina a interface comum para o serviço que será implementada pelos outros serviços.
 
+```csharp
+namespace DesignPatterns.Creational.Factory_Method
+{
+    public interface IPaymentService
+    {
+        object Process(OrderItem orderItem);
+    }
+}
+```
+
+- Implemente os serviços concretos que herdaram da interface.
+
+```csharp
+namespace DesignPatterns.Creational.Factory_Method
+{
+    public class CreditCardService : IPaymentService
+    {
+        public object Process(OrderItem orderItem)
+        {
+            return "Transação aprovada!";
+        }
+    }
+
+    public class PaymentSlipService : IPaymentService
+    {
+        public object Process(OrderItem orderItem)
+        {
+            return "Dados do boleto";
+        }
+    }
+}
+```
+
+- Defina a interface da factory.
+
+```csharp
+namespace DesignPatterns.Creational.Factory_Method
+{
+    public interface IPaymentServiceFactory
+    {
+        IPaymentService GetService(PaymentMethod paymentMethod);
+    }
+}
+```
+
+- Implemente a fábrica que cria instâncias dos serviços.
+
+```csharp
+namespace DesignPatterns.Creational.Factory_Method
+{
+    public class PaymentServiceFactory : IPaymentServiceFactory
+    {
+        private static readonly IDictionary<PaymentMethod, IPaymentService> paymentServices = new Dictionary<PaymentMethod, IPaymentService>()
+        {
+            { PaymentMethod.CreditCard, new CreditCardService() },
+            { PaymentMethod.PaymentSlip, new PaymentSlipService() }
+        };
+
+        public IPaymentService GetService(PaymentMethod paymentMethod)
+        {
+            if (!paymentServices.TryGetValue(paymentMethod, out var service))
+            {
+                throw new InvalidOperationException("Payment Method not found!");
+            }
+
+            return service;
+        }
+    }
+}
+```
+
+- Define a classe que vai orquestrar a factory method.
+
+```csharp
+namespace DesignPatterns.Creational.Factory_Method
+{
+    public class OrderItem
+    {
+        public Guid ProductId { get; set; }
+        public int Quantity { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
+    }
+}
+
+namespace DesignPatterns.Creational.Factory_Method
+{
+    public enum PaymentMethod
+    {
+        CreditCard = 1,
+        PaymentSlip = 2,
+    }
+}
+
+namespace DesignPatterns.Creational.Factory_Method
+{
+    public class Order
+    {
+        private readonly IPaymentServiceFactory _paymentServiceFactory;
+
+        public Order(IPaymentServiceFactory paymentServiceFactory)
+        {
+            _paymentServiceFactory = paymentServiceFactory;
+        }
+
+        public void Create(OrderItem orderItem)
+        {
+            var paymentService = _paymentServiceFactory.GetService(orderItem.PaymentMethod);
+            paymentService.Process(orderItem);
+        }
+    }
+}
+```
+
+- Defina a classe cliente que vai utilizar a factory.
+
+```csharp
+namespace DesignPatterns.Tests
+{
+    public class OrderTests
+    {
+        [Fact]
+        public void ShouldProcessOrderWithCreditCardService()
+        {
+            var factory = new PaymentServiceFactory();
+            var order = new Order(factory);
+            var orderItem = new OrderItem
+            {
+                ProductId = Guid.NewGuid(),
+                Quantity = 1,
+                PaymentMethod = PaymentMethod.CreditCard
+            };
+
+            order.Create(orderItem);
+
+            var service = factory.GetService(orderItem.PaymentMethod);
+            var creditCard = service.Process(orderItem);
+            Assert.Equal("Transação aprovada!", result);
+        }
+
+        [Fact]
+        public void Create_ShouldProcessOrderWithPaymentSlipService()
+        {
+            var factory = new PaymentServiceFactory();
+            var order = new Order(factory);
+            var orderItem = new OrderItem
+            {
+                ProductId = Guid.NewGuid(),
+                Quantity = 1,
+                PaymentMethod = PaymentMethod.PaymentSlip
+            };
+
+            order.Create(orderItem);
+
+            var service = factory.GetService(orderItem.PaymentMethod);
+            var paymentSlip = service.Process(orderItem);
+            Assert.Equal("Dados do boleto", result);
+        }
+    }
+}
+```
 
 ## Structural
 
