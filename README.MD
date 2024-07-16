@@ -911,11 +911,249 @@ namespace DesignPatterns.Tests.Visitor
         }
     }
 }
+```
+
+### Strategy ###
+- O Strategy é um padrão de projeto comportamental que permite selecionar um comportamento ou algoritmo em tempo de execução. O Strategy permite que o comportamento varie independentemente dos clientes que o utilizam, ou seja, torna-o intercambiável.
+- Use o padrão quando você quer usar usar diferentes variantes de um algoritmo dentro de um objeto e quer trocar de um algoritmo para o outro em tempo de execução.
+- Quando tem classes parecidas que só diferem na forma que eles executam o comportamento.
+- Use o padrão quando você tem um operador condicional muito grande que troca diferentes algoritmos dentro da mesma classe.
+
+**Exemplos**
+- Cálculo de impostos com base numa faixa salarial.
+- Um estacionamento em que o preço varia conforme o local (Praia, Shopping e Aeroporto, por exemplo).
+
+**PROS**
+- Princípio do aberto fechado: porque você pode introduzir novos comportamentos e algoritmos sem mudar o contexto.
+- É possível trocar o algoritmo/comportamento usados dentro de um objeto durante a execução.
+- Substitui herança por composição.
+- É possível desacoplar os detalhes de implementação do algoritimo do código cliente que usa ele.
+
+**CONS**
+- Se não há muita variabilidade de algoritmos e eles raramente mudam, então não há motivo para usar o padrão, pois só vai tornar o programa mais complexo.
+- Os clientes devem estar cientes das diferenças entre as estratégias para selecionar a adequada.
+
+**Como implementar?**
+- Encontre o algoritmo que varia bastante ou a condicional na classe contexto. A classe contexto mantém uma referência para uma das estratégias concretas e se comunica com esse objeto atráves da interface.
+- O contexto chama o método de execução no objeto estratégia. Ele não sabe qual tipo de estratégia está rodando ou como o algoritmo está sendo executado.
+
+```csharp
+namespace DesignPatterns.Behavioral.Strategy_Parking
+{
+    public class ParkingLot
+    {
+        private readonly IList<Ticket> _tickets;
+        private readonly ITicketCalculator _ticketCalculator;
+        private readonly int _totalLots;
+
+        public ParkingLot(string location, int totalLots)
+        {
+            _tickets = new List<Ticket>();
+            _ticketCalculator = TicketCalculatorFactory.Create(location);
+            _totalLots = totalLots;
+        }
+
+        public void CheckIn(Ticket ticket)
+        {
+            _tickets.Add(ticket);
+        }
+
+        public void CheckOut(string plate, DateTime checkoutDate)
+        {
+            var ticket = GetTicket(plate);
+            var period = new Period(ticket.CheckInDate, checkoutDate);
+            ticket.Price = _ticketCalculator.Calculate(period);
+        }
+
+        public Ticket GetTicket(string plate)
+        {
+            var ticket = _tickets.FirstOrDefault(ticket => ticket.Plate == plate);
+
+            if (ticket == null)
+            {
+                throw new Exception("Ticket not found!");
+            }
+            return ticket;
+        }
+
+        public int GetSlots()
+        {
+            return _totalLots - _tickets.Count;
+        }
+    }
+}
+```
+- Declare a interface de estratégia comum a todos os algoritmos.
+
+```csharp
+namespace DesignPatterns.Behavioral.Strategy_Parking
+{
+    public interface ITicketCalculator
+    {
+        long Calculate(Period period);
+    }
+}
+```
+- Extraia todos os algoritmos para suas próprias classes. Elas devem implementar a classe estratégia.
+
+```csharp
+namespace DesignPatterns.Behavioral.Strategy_Parking
+{
+    public class AiportCalculator : ITicketCalculator
+    {
+        private const int DAILY_RATE = 50;
+
+        public long Calculate(Period period)
+        {
+            return DAILY_RATE * period.GetDiffInDays();
+        }
+    }
+}
+namespace DesignPatterns.Behavioral.Strategy_Parking
+{
+    public class BeachCalculator : ITicketCalculator
+    {
+        private const int HOURLY_RATE = 5;
+
+        public long Calculate(Period period)
+        {
+            return HOURLY_RATE * period.GetDiffInHours();
+        }
+    }
+}
+namespace DesignPatterns.Behavioral.Strategy_Parking
+{
+    public class ShoppingCalculator : ITicketCalculator
+    {
+        private const long BASE_RATE = 10;
+        private const int BASE_PERIOD = 3;
+        private const int HOURLY_RATE = 3;
+
+        public long Calculate(Period period)
+        {
+            var price = BASE_RATE;
+            var remainingHours = period.GetDiffInHours() - BASE_PERIOD;
+
+            if(remainingHours > 0)
+            {
+                price += remainingHours * HOURLY_RATE;
+            }
+
+            return price;
+        }
+    }
+}
+namespace DesignPatterns.Behavioral.Strategy_Parking
+{
+    public class Ticket
+    {
+        public string Plate { get; set; } = null!;
+        public DateTime CheckInDate { get; set; }
+        public decimal? Price { get; set; }
+    }
+}
+namespace DesignPatterns.Behavioral.Strategy_Parking
+{
+    public class TicketCalculatorFactory
+    {
+        private static IDictionary<string, ITicketCalculator> calculators = new Dictionary<string, ITicketCalculator>()
+        {
+            {
+                "beach", new BeachCalculator()
+            },
+            {
+                "shopping", new ShoppingCalculator()
+            },
+            {
+                "airport", new AiportCalculator()
+            }
+        };
+
+        public static ITicketCalculator Create(string location)
+        {
+            if(!calculators.TryGetValue(location, out var findCalculator))
+            {
+                throw new Exception("Ticket calculator not found!");
+            }
+
+            return findCalculator;
+        }
+    }
+}
+```
+- O cliente identifica qual estratégia ele quer chamar e chama pelo contexto.
+
+```csharp
+using DesignPatterns.Behavioral.Strategy_Parking;
+using FluentAssertions;
+
+namespace DesignPatterns.Tests.Strategy
+{
+    public class ParkingLotTests
+    {
+        [Test]
+        public void ShouldBeAbleToCreateAParkingLot()
+        {
+            var parkingLot = new ParkingLot("airport", 500);
+            parkingLot.GetSlots().Should().Be(500);
+        }
+
+        [Test]
+        public void ShouldBeAbleToParkTheCarOnTheBeachForTwoHoursAndWhenLeavingTheValueShouldBeTen_FiveByHour()
+        {
+            var parkingLot = new ParkingLot("beach", 500);
+            var ticketDto = new Ticket
+            {
+                CheckInDate = new DateTime(2021, 10, 01, 10, 00, 00),
+                Plate = "AAA-1111",
+            };
+            
+            parkingLot.CheckIn(ticketDto);
+            parkingLot.CheckOut("AAA-1111", new DateTime(2021, 10, 01, 12, 00, 00));
+
+            var ticket = parkingLot.GetTicket("AAA-1111");
+            ticket.Price.Should().Be(10);
+        }
+
+        [Test]
+        public void ShouldBeAbleToParkTheCarInTheShoppingForSevenHoursAndWhenLeavingTheValueShouldBeTwentyTwoTenTheFirstThreeHoursAndAfterThreeForHour()
+        {
+            var parkingLot = new ParkingLot("shopping", 500);
+            var ticketDto = new Ticket
+            {
+                CheckInDate = new DateTime(2021, 10, 01, 10, 00, 00),
+                Plate = "AAA-1111",
+            };
+
+            parkingLot.CheckIn(ticketDto);
+            parkingLot.CheckOut("AAA-1111", new DateTime(2021, 10, 01, 17, 00, 00));
+
+            var ticket = parkingLot.GetTicket("AAA-1111");
+            ticket.Price.Should().Be(22);        
+        }
+
+        [Test]
+        public void ShouldBeAbleToParkInTheAirportForThreeDaysAndWhenLeavingTheValueShouldBeOneHundredAndFiftyForDay()
+        {
+            var parkingLot = new ParkingLot("airport", 500);
+            var ticketDto = new Ticket
+            {
+                CheckInDate = new DateTime(2021, 10, 01, 10, 00, 00),
+                Plate = "AAA-1111",
+            };
+
+            parkingLot.CheckIn(ticketDto);
+            parkingLot.CheckOut("AAA-1111", new DateTime(2021, 10, 04, 10, 00, 00));
+
+            var ticket = parkingLot.GetTicket("AAA-1111");
+            ticket.Price.Should().Be(150);
+        }
+    }
+}
+```
 
 ### Template Method ###
 - Geralmente usado quando as subclasses tem códigos muito semelhantes (quando existe um padrão).
-
-```
 
 ## 🧪 Techs
 

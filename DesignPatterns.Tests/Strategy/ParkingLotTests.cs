@@ -47,7 +47,7 @@ namespace DesignPatterns.Tests.Strategy
         }
 
         [Test]
-        public void ShouldBeAble_ToParkInTheAirportForThreeDaysAndWhenLeavingTheValueShouldBeOneHundredAndFiftyForDay()
+        public void ShouldBeAbleToParkInTheAirportForThreeDaysAndWhenLeavingTheValueShouldBeOneHundredAndFiftyForDay()
         {
             var parkingLot = new ParkingLot("airport", 500);
             var ticketDto = new Ticket
