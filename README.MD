@@ -1153,7 +1153,20 @@ namespace DesignPatterns.Tests.Strategy
 ```
 
 ### Template Method ###
+- É um padrão de projeto comportamental que permite que subclasses redefinam passos específicos de um algoritmo sem mudar a ordem e estrutura em que esses passos são executados.
 - Geralmente usado quando as subclasses tem códigos muito semelhantes (quando existe um padrão).
+
+**Exemplos**
+- Preparação de uma bebida em que você tem uma ordem de preparação e ingredientes comuns e específicos.
+- Um item que tem cálculos de impostos e tem as subclasses Whisky, Beer e Water, mas Water não tem imposto.
+
+**Pros**
+- O cliente pode sobrescrever apenas partes de um algoritmo grande.
+- Pode reduzir código duplicado para uma superclasse.
+
+**Contras**
+- Pode violar o Princípio de substituição de Liskov ao suprimir uma etapa padrão de implementação atráves de subclasse.
+- Implementações do Template Method tendem a ser mais difíceis de se manter quanto mais etapas eles tiverem.
 
 ## 🧪 Techs
 
