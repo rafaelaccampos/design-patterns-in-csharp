@@ -1168,6 +1168,126 @@ namespace DesignPatterns.Tests.Strategy
 - Pode violar o Princípio de substituição de Liskov ao suprimir uma etapa padrão de implementação atráves de subclasse.
 - Implementações do Template Method tendem a ser mais difíceis de se manter quanto mais etapas eles tiverem.
 
+**Como implementar?**
+- Defina a classe abstrata e declare o método que servirá como templateMethod.
+
+```csharp
+public abstract class Item
+{
+    public Item(string category, string description, decimal price)
+    {
+        Category = category;
+        Description = description;
+        Price = price;
+    }
+
+    public string Category { get; private set; }
+    public string Description { get; private set; }
+    public decimal Price { get; private set; }
+}
+
+public abstract class TaxItem : Item
+{
+    protected TaxItem(string category, string description, decimal price) 
+        : base(category, description, price)
+    {
+    }
+
+    public decimal CalculateTax()
+    {
+        return (Price * GetTaxRate()) / 100;
+    }
+
+    public abstract decimal GetTaxRate();
+}
+```
+
+- Defina as subclasses concretas.
+
+```csharp
+public class Beer : TaxItem
+{
+    public Beer(string description, decimal price) 
+        : base("Beer", description, price)
+    {
+    }
+
+    public override decimal GetTaxRate()
+    {
+        return 10;
+    }
+}
+
+public class Whisky : TaxItem
+{
+    public Whisky(string description, decimal price) 
+        : base("Whisky", description, price)
+    {
+    }
+
+    public override decimal GetTaxRate()
+    {
+        return 20;
+    }
+}
+
+public class Water : Item
+{
+    public Water(string description, decimal price) 
+        : base("Water", description, price)
+    {
+    }
+}
+```
+
+- Defina as classes que irá chamar as classes abstratas e o cliente que irá utilizar
+
+```csharp
+public class Invoice
+{
+    private readonly IList<Item> _items;
+
+    public Invoice()
+    {
+        _items = new List<Item>();
+    }
+
+    public void Add(Item item)
+    {
+        _items.Add(item);
+    }
+
+    public decimal GetTaxes()
+    {
+        return _items.Where(item => item is TaxItem)
+                     .Cast<TaxItem>()
+                     .Sum(taxItem => taxItem.CalculateTax());
+    }
+}
+
+using DesignPatterns.Behavioral.TemplateMethod_Beverage;
+using FluentAssertions;
+
+namespace DesignPatterns.Tests.Template_Method
+{
+    public class TempleateMethodBeverageTests
+    {
+        [Test]
+        public void ShouldBeAbleToCalculateTaxesOfInvoice()
+        {
+            var invoice = new Invoice();
+            invoice.Add(new Beer("Heineken", 20));
+            invoice.Add(new Whisky("Jack Daniels", 100));
+            invoice.Add(new Water("Crystal", 5));
+
+            var taxes = invoice.GetTaxes();
+
+            taxes.Should().Be(22);
+        }
+    }
+}
+```
+
 ## 🧪 Techs
 
 This project was develop with the following technologies:
