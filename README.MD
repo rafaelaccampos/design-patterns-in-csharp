@@ -1155,6 +1155,8 @@ namespace DesignPatterns.Tests.Strategy
 ### Template Method ###
 - É um padrão de projeto comportamental que permite que subclasses redefinam passos específicos de um algoritmo sem mudar a ordem e estrutura em que esses passos são executados.
 - Geralmente usado quando as subclasses tem códigos muito semelhantes (quando existe um padrão).
+- Utilize template method quando você quiser que o cliente estenda apenas etapas específicas de uma classe.
+- Utilize quando você tem classes quase idênticas com pequenas diferenças.
 
 **Exemplos**
 - Preparação de uma bebida em que você tem uma ordem de preparação e ingredientes comuns e específicos.
@@ -1288,6 +1290,28 @@ namespace DesignPatterns.Tests.Template_Method
 }
 ```
 
+### Mediator ###
+- O Mediator é um padrão de projeto comportamental que restringe comunicações diretas entre objetos e os força se comunicar por meio de um objeto mediador.
+- Define um objeto que encapsula a forma como um conjunto de objetos interage.
+- É como se fosse um motor de controle.
+
+**Exemplos**
+- Um chat é um bom exemplo de Mediator, pois facilita a comunicação entre vários usuários, grupos de usuários e funcionalidades adicionais.
+- Um formulário de inscrição que você escolhe uma opção em um menu que pode habilitar ou desabilitar campos com base nas interações do usuário, o mediador pode centralizar essa lógica de habilitar ou desabilitar campos.
+- Um painel de controle, onde diferentes widgets precisam interagir entre si. Por exemplo, ao atualizar um gráfico, a atualização pode refletir em um painel de resumo de estatística.
+
+**Pros**
+- Promove o desacoplamento ao evitar que os objetos se refiram uns aos outros explicitamente, permitindo variar suas interações independentemente.
+- Princípio da responsabilidade única, pois você pode extrair as comunicações entre vários componentes para um único lugar.
+- Princípio aberto/fechado você pode introduzir novos mediadores sem ter que modificar o componente.
+- Você pode reutilizar componentes individuais mais facilmente.
+
+**Contras**
+- O objeto mediador pode se tornar um objeto Deus, ou seja, um objeto que sabe demais ou que faz demais.
+
+**Como implementar?**
+- 
+
 ## 🧪 Techs
 
 This project was develop with the following technologies:
@@ -1307,9 +1331,8 @@ Clone the projet and access the pasta.
 ```bash
 $ git clone https://github.com/rafaelaccampos/design-patterns-in-csharp
 $ cd DesignPatterns
-# To install the dependencies
-$ dotnet restore
 
+$ dotnet restore
 
 ```
 
