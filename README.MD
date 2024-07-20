@@ -1313,7 +1313,11 @@ namespace DesignPatterns.Tests.Template_Method
 - O objeto mediador pode se tornar um objeto Deus, ou seja, um objeto que sabe demais ou que faz demais.
 
 **Como implementar?**
-- 
+- Identifique classes que estão acopladas e que poderiam ser beneficiadas se estiverem mais independentes.
+- Declare a interface do mediador e o método que vai receber as notificações.
+- Implemente a classe concreta do mediador. A classe fica responsável por armazenar todas as referências que ela gerencia.
+- Componentes devem armazenar uma referência ao objeto do mediador, geralmente no construtor passando o mediador por argumento.
+- Mude as classes para chamar o objeto mediador ao invés dos outros componentes diretamente.
 
 ## 🧪 Techs
 
