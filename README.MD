@@ -1293,7 +1293,7 @@ namespace DesignPatterns.Tests.Template_Method
 ### Mediator ###
 - O Mediator é um padrão de projeto comportamental que restringe comunicações diretas entre objetos e os força se comunicar por meio de um objeto mediador.
 - Define um objeto que encapsula a forma como um conjunto de objetos interage.
-- É como se fosse um motor de controle.
+- É como se fosse um motor de controle. É um tipo de padrão de desacoplamento.
 - Utilize o padrão Mediator quando é difícil mudar algumas classes porque elas estão acopladas a outras.
 - Utilize o padrão quando não puder reutilizar um componente porque ele é dependente de outros componentes.
 - Utilize o padrão quando você criar muitas subclasses para componentes apenas para reusar algum comportamento básico em vários contextos.
@@ -1317,7 +1317,64 @@ namespace DesignPatterns.Tests.Template_Method
 - Declare a interface do mediador e o método que vai receber as notificações.
 - Implemente a classe concreta do mediador. A classe fica responsável por armazenar todas as referências que ela gerencia.
 - Componentes devem armazenar uma referência ao objeto do mediador, geralmente no construtor passando o mediador por argumento.
+
+```csharp
+namespace DesignPatterns.Behavioral.Mediator_Channel
+{
+    public class Channel
+    {
+        private readonly IList<Participant> _participants;
+
+        public Channel()
+        {
+            _participants = new List<Participant>();
+        }
+
+        public void Register(Participant participant)
+        {
+            _participants.Add(participant);
+        }
+
+        public void SendAll(Participant from, string message)
+        {
+            foreach(var to in _participants)
+            {
+                if (from != to)
+                {
+                    to.Receive(from, message);
+                }
+            }
+        }
+    }
+}
+```
 - Mude as classes para chamar o objeto mediador ao invés dos outros componentes diretamente.
+
+```csharp
+using DesignPatterns.Behavioral.Mediator_Channel;
+
+namespace DesignPatterns.Tests.Mediator
+{
+    public class ChatTests
+    {
+        [Test]
+        public void ShouldBeAbleToExchangeMessagesBetweenTheChannel()
+        {
+            var firstParticipant = new Participant("FirstParticipant");
+            var secondParticipant = new Participant("SecondParticipant");
+            var thirdParcipant = new Participant("ThirdParticipant");
+
+            var channel = new Channel();
+            channel.Register(firstParticipant);
+            channel.Register(secondParticipant);
+            channel.Register(thirdParcipant);
+
+            channel.SendAll(firstParticipant, "Hello!");
+        }
+    }
+}
+
+```
 
 ## 🧪 Techs
 
