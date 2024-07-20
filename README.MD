@@ -1294,6 +1294,9 @@ namespace DesignPatterns.Tests.Template_Method
 - O Mediator é um padrão de projeto comportamental que restringe comunicações diretas entre objetos e os força se comunicar por meio de um objeto mediador.
 - Define um objeto que encapsula a forma como um conjunto de objetos interage.
 - É como se fosse um motor de controle.
+- Utilize o padrão Mediator quando é difícil mudar algumas classes porque elas estão acopladas a outras.
+- Utilize o padrão quando não puder reutilizar um componente porque ele é dependente de outros componentes.
+- Utilize o padrão quando você criar muitas subclasses para componentes apenas para reusar algum comportamento básico em vários contextos.
 
 **Exemplos**
 - Um chat é um bom exemplo de Mediator, pois facilita a comunicação entre vários usuários, grupos de usuários e funcionalidades adicionais.
