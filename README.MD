@@ -348,6 +348,27 @@ namespace DesignPatterns.Tests
 }
 ```
 
+### Abstract Factory ###
+- O Abstract Factory é um padrão de projeto criacional que permite que você tenha famílias de projetos relacionados sem criar classes concretas.
+- Use Abstract Factory quando seu código precisar trabalhar com diversas famílias de produtos relacionados.
+- Quando uma classe lida com múltiplos tipos de produto pode valer a pena implementar o Abstract Factory.
+
+**Exemplos**
+- Escolher tema light ou dark, pois você precisa de um conjunto de elementos compatível com o tema escolhido.
+- Escolha de móveis modernos ou vitorianos, pois você precisa que seja criado elementos de acordo com o tipo de móvel escolhido.
+- Para criação de múltiplos repositórios (que são passados pelo construtor).
+
+**PROS**
+- Os produtos que você obtém de um abstract factory são compatíveis entre si.
+- Evita vínculo forte entre implementações concretas e o código do cliente.
+- Princípio da responsabilidade única: É possível extrair o código de criação de produtos para um único lugar.
+- Princípio do aberto e fechado: É possível introduzir novos produtos sem quebrar o código cliente já existente.
+
+**CONS**
+- O código se torna mais complexo porque são adicionadas muitas interfaces e classes juntos com o padrão.
+
+**Como implementar?**
+
 ## Structural
 
 ### Adapter ###
