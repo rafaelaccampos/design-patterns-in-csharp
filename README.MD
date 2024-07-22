@@ -540,7 +540,6 @@ namespace DesignPatterns.Tests.AbstractFactory
         }
     }
 }
-
 ```
 
 ## Structural
