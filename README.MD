@@ -368,6 +368,180 @@ namespace DesignPatterns.Tests
 - O código se torna mais complexo porque são adicionadas muitas interfaces e classes juntos com o padrão.
 
 **Como implementar?**
+- Mapeie os produtos distintos e as variantes desses produtos.
+- Declare interface de produto abstratas para todos os tipos de produto. Então, faça com que as classes concretas de produtos implementem essas interfaces.
+
+```csharp
+namespace DesignPatterns.Structural.Abstract_Factory
+{
+    public interface IButton
+    {
+        string Color { get; }
+        string BackgroundColor { get; }
+    }
+}
+namespace DesignPatterns.Structural.Abstract_Factory
+{
+    public interface ILabel
+    {
+        string Color { get; }
+    }
+}
+
+namespace DesignPatterns.Structural.Abstract_Factory
+{
+    public class DarkButton : IButton
+    {
+        public DarkButton()
+        {
+            Color = "white";
+            BackgroundColor = "black";
+        }
+
+        public string Color { get; private set; }
+
+        public string BackgroundColor { get; private set; }
+    }
+}
+namespace DesignPatterns.Structural.Abstract_Factory
+{
+    public class LightButton : IButton
+    {
+        public LightButton()
+        {
+            Color = "white";
+            BackgroundColor = "blue";
+        }
+
+        public string Color { get; private set; }
+
+        public string BackgroundColor { get; private set; }
+    }
+}
+namespace DesignPatterns.Structural.Abstract_Factory
+{
+    public class DarkLabel : ILabel
+    {
+        public DarkLabel()
+        {
+            Color = "white";
+        }
+
+        public string Color { get; private set; }
+    }
+}
+namespace DesignPatterns.Structural.Abstract_Factory
+{
+    public class LightLabel : ILabel
+    {
+        public LightLabel()
+        {
+            Color = "black";
+        }
+
+        public string Color { get; private set; }
+    }
+}
+```
+
+- Implemente um conjunto de classes fábricas concretas, uma para cada variante de produto.
+
+```csharp
+namespace DesignPatterns.Structural.Abstract_Factory
+{
+    public interface IAbstractWidgetFactory
+    {
+        ILabel CreateLabel();
+        IButton CreateButton();
+    }
+}
+namespace DesignPatterns.Structural.Abstract_Factory
+{
+    public class DarkThemeFactory : IAbstractWidgetFactory
+    {
+        public ILabel CreateLabel()
+        {
+            return new DarkLabel();
+        }
+
+        public IButton CreateButton()
+        {
+            return new DarkButton();
+        }
+    }
+}
+namespace DesignPatterns.Structural.Abstract_Factory
+{
+    public class LightThemeFactory : IAbstractWidgetFactory
+    {
+        public ILabel CreateLabel()
+        {
+            return new LightLabel();
+        }
+
+        public IButton CreateButton()
+        {
+            return new LightButton();
+        }
+    }
+}
+```
+
+- Crie um código de inicialização da fábrica. Ele deve instanciar uma das classes fábricas concretas, dependendo da configuração da aplicação ou do ambiente atual. Passe esse objeto fábrica para todas as classes que constroem produtos.
+- Substitua todas as chamadas diretas aos construtores do produto e chame o método de criação apropriado no objeto fábrica.
+
+```csharp
+namespace DesignPatterns.Structural.Abstract_Factory
+{
+    public class View
+    {
+        public View(IAbstractWidgetFactory abstractWidgetFactory)
+        {
+            Label = abstractWidgetFactory.CreateLabel();
+            Button = abstractWidgetFactory.CreateButton();
+        }
+
+        public ILabel Label { get; private set; }
+        public IButton Button { get; private set; }
+    }
+}
+using DesignPatterns.Structural.Abstract_Factory;
+using FluentAssertions;
+using FluentAssertions.Execution;
+
+namespace DesignPatterns.Tests.AbstractFactory
+{
+    public class ViewTests
+    {
+        [Test]
+        public void ShouldBeAbleToCreateAViewWithLightTheme()
+        {
+            var view = new View(new LightThemeFactory());
+
+            using(new AssertionScope())
+            {
+                view.Label.Color.Should().Be("black");
+                view.Button.Color.Should().Be("white");
+                view.Button.BackgroundColor.Should().Be("blue");
+            }
+        }
+
+        [Test]
+        public void ShouldBeAbleToCreateAViewWithDarkTheme()
+        {
+            var view = new View(new DarkThemeFactory());
+
+            using(new AssertionScope())
+            {
+                view.Label.Color.Should().Be("white");
+                view.Button.Color.Should().Be("white");
+                view.Button.BackgroundColor.Should().Be("black");
+            }
+        }
+    }
+}
+
+```
 
 ## Structural
 
