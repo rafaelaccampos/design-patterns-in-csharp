@@ -1162,11 +1162,11 @@ namespace DesignPatterns.Tests.Strategy
 - Preparação de uma bebida em que você tem uma ordem de preparação e ingredientes comuns e específicos.
 - Um item que tem cálculos de impostos e tem as subclasses Whisky, Beer e Water, mas Water não tem imposto.
 
-**Pros**
+**PROS**
 - O cliente pode sobrescrever apenas partes de um algoritmo grande.
 - Pode reduzir código duplicado para uma superclasse.
 
-**Contras**
+**CONS**
 - Pode violar o Princípio de substituição de Liskov ao suprimir uma etapa padrão de implementação atráves de subclasse.
 - Implementações do Template Method tendem a ser mais difíceis de se manter quanto mais etapas eles tiverem.
 
@@ -1304,13 +1304,13 @@ namespace DesignPatterns.Tests.Template_Method
 - Um formulário de inscrição que você escolhe uma opção em um menu que pode habilitar ou desabilitar campos com base nas interações do usuário, o mediador pode centralizar essa lógica de habilitar ou desabilitar campos.
 - Um painel de controle, onde diferentes widgets precisam interagir entre si. Por exemplo, ao atualizar um gráfico, a atualização pode refletir em um painel de resumo de estatística.
 
-**Pros**
+**PROS**
 - Promove o desacoplamento ao evitar que os objetos se refiram uns aos outros explicitamente, permitindo variar suas interações independentemente.
 - Princípio da responsabilidade única, pois você pode extrair as comunicações entre vários componentes para um único lugar.
 - Princípio aberto/fechado você pode introduzir novos mediadores sem ter que modificar o componente.
 - Você pode reutilizar componentes individuais mais facilmente.
 
-**Contras**
+**CONS**
 - O objeto mediador pode se tornar um objeto Deus, ou seja, um objeto que sabe demais ou que faz demais.
 
 **Como implementar?**
