@@ -1580,6 +1580,8 @@ namespace DesignPatterns.Tests.Mediator
 - Enfileira ou faz registros de solicitações.
 - Suporta operações que podem ser desfeitas.
 - O retorno de um Command é sempre void, pelo motivo de que você desacopla quem chama de quem é chamado (não tem quem espere a resposta).
+- Utilize o padrão quando você quer colocar operações em fila, agendar sua execução ou executá-las após um tempo.
+- Utilize o padrão Command quando você quer implementar operações reversíveis.
 
 **Exemplos**
 - Os débitos e créditos de uma conta, pois é importante ter todo o histórico e conseguir desfazer ou refazer uma operação.
@@ -1597,7 +1599,172 @@ namespace DesignPatterns.Tests.Mediator
 - O código pode ficar mais complicado já que você está introduzindo uma nova camada entre remetentes e destinatários.
 
 **Como implementar?**
+- Declare a interface de command com um único método de execução.
 
+```csharp
+namespace DesignPatterns.Behavioral.Command_Transaction
+{
+    public interface ICommand
+    {
+        void Execute();
+    }
+}
+```
+
+- Extraia os pedidos para dentro das classes concretas que implementam a classe command. Cada classe deve ter um conjunto de campos para armazenar os argumentos dos pedidos junto com a referência ao objeto destinatário real. Os valores devem ser inicializados no construtor do command.
+
+```csharp
+namespace DesignPatterns.Behavioral.Command_Transaction
+{
+    public class CreditCommand : ICommand
+    {
+        private readonly Account _account;      
+        private readonly decimal _amount;
+
+        public CreditCommand(Account account, decimal amount)
+        {
+            _account = account;
+            _amount = amount;
+        }
+
+        public void Execute()
+        {
+            _account.Credit(_amount);
+        }
+    }
+}
+namespace DesignPatterns.Behavioral.Command_Transaction
+{
+    public class DebitCommand : ICommand
+    {
+        private readonly Account _account;
+        private readonly decimal _amount;
+
+        public DebitCommand(Account account, decimal amount)
+        {
+            _account = account;
+            _amount = amount;
+        }
+
+        public void Execute()
+        {
+            _account.Debit(_amount);
+        }
+    }
+}
+```
+
+- Identifique as classes que vão ser remetentes. Adicione os campos para armazenar commands nessa classe. Remetentes devem sempre se comunicar com seus comandos atráves da interface command.
+- Mude os remetentes para executar o command ao invés de enviar o pedido para o destinatário diretamente.
+
+```csharp
+namespace DesignPatterns.Behavioral.Command_Transaction
+{
+    public class Transaction
+    {
+        public Transaction(string type, decimal amount) 
+        {
+            Type = type;
+            Amount = amount;
+        }
+
+        public string Type { get; private set; }
+
+        public decimal Amount { get; private set; }
+    }
+}
+
+namespace DesignPatterns.Behavioral.Command_Transaction
+{
+    public class Account
+    {
+        private readonly IList<Transaction> _transactions;
+
+        public Account()
+        {
+            _transactions = new List<Transaction>();
+        }
+
+        public void Credit(decimal amount)
+        {
+            var transaction = new Transaction("credit", amount);
+            _transactions.Add(transaction);
+        }
+
+        public void Debit(decimal amount)
+        {
+            var transaction = new Transaction("debit", amount);
+            _transactions.Add(transaction);
+        }
+
+        public decimal GetBalance()
+        {
+            decimal balance = 0;
+            foreach (var transaction in _transactions)
+            {
+                if(transaction.Type == "credit")
+                {
+                    balance += transaction.Amount;
+                }
+
+                if(transaction.Type == "debit")
+                {
+                    balance -= transaction.Amount;
+                }
+            }
+
+            return balance;
+        }
+    }
+}
+```
+- O cliente deve inicializar objetos criando os destinatários, criando os commands e os associando com os destinatários se necessário, ou criando os remetentes e associando os commands específicos.
+
+```csharp
+using DesignPatterns.Behavioral.Command_Transaction;
+using FluentAssertions;
+
+namespace DesignPatterns.Tests.Command
+{
+    public class AccountTests
+    {
+        [Test]
+        public void ShouldBeAbleToCreateAnAccount()
+        {
+            var account = new Account();
+            var balance = account.GetBalance();
+
+            balance.Should().Be(0);
+        }
+
+        [Test]
+        public void ShouldBeAbleToCreditFromAnAccountUsingCommand()
+        {
+            var account = new Account();
+            var creditCommand = new CreditCommand(account, 100);
+            
+            creditCommand.Execute();
+
+            var balance = account.GetBalance();
+            balance.Should().Be(100);
+        }
+
+        [Test]
+        public void ShouldBeAbleToDebitFromAnAccountUsingCommand()
+        {
+            var account = new Account();
+            var creditCommand = new CreditCommand(account, 100);
+            var debitCommand = new DebitCommand(account, 50);
+
+            creditCommand.Execute();
+            debitCommand.Execute();
+
+            var balance = account.GetBalance();
+            balance.Should().Be(50);
+        }
+    }
+}
+```
 
 ## 🧪 Techs
 
