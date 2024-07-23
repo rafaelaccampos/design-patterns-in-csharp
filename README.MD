@@ -1492,6 +1492,7 @@ namespace DesignPatterns.Tests.Template_Method
 - Utilize o padrão quando não puder reutilizar um componente porque ele é dependente de outros componentes.
 - Utilize o padrão quando você criar muitas subclasses para componentes apenas para reusar algum comportamento básico em vários contextos.
 - Relação com eventos, mensageria.
+- Muitos para muitos.
 
 **Exemplos**
 - Um chat é um bom exemplo de Mediator, pois facilita a comunicação entre vários usuários, grupos de usuários e funcionalidades adicionais.
@@ -1570,6 +1571,33 @@ namespace DesignPatterns.Tests.Mediator
 }
 
 ```
+
+### Command ###
+- O Command é um padrão de projeto comportamental que encapsula uma solicitação como um objeto.
+- Desacopla quem chama de quem é chamado.
+- Vem com o objetivo de separar leitura da escrita. 
+- Permite que cliente diferentes parametrizem comandos de forma diferente.
+- Enfileira ou faz registros de solicitações.
+- Suporta operações que podem ser desfeitas.
+- O retorno de um Command é sempre void, pelo motivo de que você desacopla quem chama de quem é chamado (não tem quem espere a resposta).
+
+**Exemplos**
+- Os débitos e créditos de uma conta, pois é importante ter todo o histórico e conseguir desfazer ou refazer uma operação.
+- Editor de texto.
+- Cenários em que você deseja separar leitura de escrita.
+
+**PROS**
+- Princípio da responsabilidade única: É possível desacoplar classes que invocam operações de classes que fazem operações.
+- Princípio do aberto e fechado: É possível introduzir novos comandos sem quebrar o código já existente.
+- Você pode implementar desfazer/refazer.
+- Você pode implementar a execução adiada de operações.
+- Você pode montar um conjunto de comandos simples em um complexo. 
+
+**CONS**
+- O código pode ficar mais complicado já que você está introduzindo uma nova camada entre remetentes e destinatários.
+
+**Como implementar?**
+
 
 ## 🧪 Techs
 
