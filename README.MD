@@ -1766,6 +1766,55 @@ namespace DesignPatterns.Tests.Command
 }
 ```
 
+### Observer (Publish-Subscriber) ###
+- O observer é um padrão de projeto comportamental que permite que você defina uma forma de assinatura para que vários objetos tenham ciência de quando um evento acontecer sobre o objeto que estão observando.
+- Quando o objeto muda de estado, os seus dependentes são notificados e atualizados.
+- Utilize o padrão quando observer quando mudanças no estado de um objeto podem precisar mudar outros objetos e o conjunto de objetos é desconhecido ou muda dinamicamente.
+
+**Exemplos**
+- Para assinatura de um produto específico (Ex: Um cliente que quer receber notificação sobre quando uma TV específica estiver a venda ou em promoção).
+- Quando você quer executar alguma ação em um componente após um evento em outro componente surgir (Ex: Mudar o label do País para Brasil quando o input receber esse valor). 
+
+**PROS**
+- Princípio aberto fechado: Você pode introduzir novas classes assinantes sem ter que modificar o código da publicadora e vice-versa.
+- Você pode estabelecer relações entre objetos durante a execução.
+
+**CONS**
+- Assinantes são notificados em ordem aleatória.
+
+**Como implementar?**
+- Identifique a funcionalidade principal e defina-a como publicadora. As outras classes serão as assinantes.
+- Declare a interface do assinante com um método para notificar os assinantes.
+
+```csharp
+namespace DesignPatterns.Behavioral.Observer_UI
+{
+    public abstract class Observable
+    {
+        public IList<IObserver> _observables;
+
+        public Observable()
+        {
+            _observables = new List<IObserver>();
+        }
+
+        public void Subscribe(IObserver observer)
+        {
+            _observables.Add(observer);
+        }
+
+        public void NotifyAll(string name, string value)
+        {
+            foreach(var observer in _observables)
+            {
+                observer.Notify(name, value);
+            }
+        }
+    }
+}
+```
+
+
 ## 🧪 Techs
 
 This project was develop with the following technologies:
