@@ -1773,7 +1773,7 @@ namespace DesignPatterns.Tests.Command
 
 **Exemplos**
 - Para assinatura de um produto específico (Ex: Um cliente que quer receber notificação sobre quando uma TV específica estiver a venda ou em promoção).
-- Quando você quer executar alguma ação em um componente após um evento em outro componente surgir (Ex: Mudar o label do País para Brasil quando o input receber esse valor). 
+- Quando você quer executar alguma ação em um componente após um evento em outro componente acontecer (Ex: Mudar a label do País para Brasil quando o input receber esse valor). 
 
 **PROS**
 - Princípio aberto fechado: Você pode introduzir novas classes assinantes sem ter que modificar o código da publicadora e vice-versa.
@@ -1785,6 +1785,19 @@ namespace DesignPatterns.Tests.Command
 **Como implementar?**
 - Identifique a funcionalidade principal e defina-a como publicadora. As outras classes serão as assinantes.
 - Declare a interface do assinante com um método para notificar os assinantes.
+
+```csharp
+namespace DesignPatterns.Behavioral.Observer_UI
+{
+    public interface IObserver
+    {
+        void Notify(string name, string value);
+    }
+}
+```
+
+- Declare a interface da publicadora e descreva métodos para adicionar e remover um assinante da lista. As classes publicadoras só devem se comunicar com os assinantes por meio do assinante.
+- Decida onde colocar a lista atual dos assinantes e a implementação do métodos para adição e remoção de assinantes, o melhor lugar é numa classe abstrata derivada da classe publicadora.
 
 ```csharp
 namespace DesignPatterns.Behavioral.Observer_UI
@@ -1814,6 +1827,95 @@ namespace DesignPatterns.Behavioral.Observer_UI
 }
 ```
 
+- Crie as classes publicadoras concretas e a cada vez que algo acontece, ela deve notificar seus assinantes.
+
+```csharp
+namespace DesignPatterns.Behavioral.Observer_UI
+{
+    public class InputText : Observable
+    {
+        public InputText(string name)
+            : base()
+        {
+            Value = "";
+            Name = name;
+        }
+
+        public string Value { get; private set; }
+        public string Name { get; private set; }
+
+        public void SetValue(string value)
+        {
+            Value = value;
+            NotifyAll(Name, Value);
+        }
+    }
+}
+```
+- Crie as classes concretas dos assinantes.
+
+```csharp
+namespace DesignPatterns.Behavioral.Observer_UI
+{
+    public class Label : IObserver
+    {
+        private readonly string _expression;
+
+        public Label(string expression)
+        {
+            _expression = expression;
+            Value = "";
+        }
+
+        public string Value { get; private set; }
+
+        public void Notify(string name, string value)
+        {
+            Value = _expression.Replace($"{name}", value);
+        }
+    }
+}
+```
+
+- O cliente deve criar todos os assinantes necessários e registrá-los com suas publicadoras.
+
+```csharp
+using DesignPatterns.Behavioral.Observer_UI;
+using FluentAssertions;
+using FluentAssertions.Execution;
+
+namespace DesignPatterns.Tests.Observer
+{
+    public class ComponentTests
+    {
+        [Test]
+        public void ShouldBeAbleToWriteInTheInputAndShowUpdatedDataInTheLabel()
+        {
+            var inputText = new InputText("country"); //observable
+            var firstCountryLabel = new Label($"País: {inputText.Name}"); //observer
+            var secondCountryLabel = new Label($"Country: {inputText.Name}"); //observer
+
+            inputText.Subscribe(firstCountryLabel);
+            inputText.Subscribe(secondCountryLabel);
+            inputText.SetValue("Brasil");
+
+            using (new AssertionScope())
+            {
+                firstCountryLabel.Value.Should().Be("País: Brasil");
+                secondCountryLabel.Value.Should().Be("Country: Brasil");
+            }
+
+            inputText.SetValue("França");
+
+            using (new AssertionScope())
+            {
+                firstCountryLabel.Value.Should().Be("País: França");
+                secondCountryLabel.Value.Should().Be("Country: França");
+            }
+        }
+    }
+}
+```
 
 ## 🧪 Techs
 
