@@ -1918,15 +1918,24 @@ namespace DesignPatterns.Tests.Observer
 ```
 
 ### State ###
-- 
+- O State é um padrão de projeto comportamental que permite que um objeto altere seu comportamento com base num estado interno.
+- Semelhante ao padrão Strategy, mas o State pode estar ciente de outro estado e transitar de um para o outro, enquanto o Strategy raramente sabe sobre as outras estratégias.
+- Utilize o padrão quando você tem um objeto que se comporta de maneira diferente dependendo do seu estado atual, quando o número de estados é enorme e quando o código específico muda com frequência.
+- Utilize o padrão quando você tem muitas condicionais grandes que alteram como a classe se comporta de acordo com os valores atuais.
+- Utilize o padrão quando você tem muito código duplicado em muitos estados parecidos e transições baseadas em condições.
+
 **Exemplos**
--  
+-  Um documento que tenha três estados: rascunho, moderação e publicado e cada um desses status é responsável por fazer algo diferenre no sistema.
+- Um pedido que tem os status pendente, confirmado e cancelado e a partir de cada estado tem que ser feito uma ação diferente.
+- Um editor de texto que a partir de um seleção, como por exemplo, negrito, muda a cor do texto para negrito.
 
 **PROS**
--
+- Princípio da responsabilidade única: Separa os estados em classes separadas.
+- Princípio aberto e fechado: Introduz novos estados sem quebrar código já existente.
+- Evita o uso de condicionais muito grandes e complexas.
 
 **CONS**
--
+- A aplicação pode ser over-engineer se a classe não tiver muito estados ou se raramente os status mudam.
 
 **Como implementar?**
 - 
