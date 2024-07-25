@@ -1939,10 +1939,185 @@ namespace DesignPatterns.Tests.Observer
 
 **Como implementar?**
 - Decida qual classe vai agir como contexto. Pode ser uma classe existente que já tenha código dependente do estado.
-- Declare a interface do estado, colocando métodos que contenham comportamentos específico ao estado.
-- Para cada estado, crie uma classe concreta que deriva da interface do estado. Então, extraia todo o conteúdo do contexto e coloque nessa classe.
 - Na classe contexto, adicione um campo de referência do tipo interface do estado e um setter público que permite sobrescrever o valor daquele campo.
 - Para trocar o estado do contexto, crie uma instância de uma das classes de estado e passe para o contexto. Pode ser feito dentro do próprio contexto, ou em vários estados, ou no cliente. Lembre-se que a classe se torna dependente da classe concretaa de estado que ela instanciou.
+
+```csharp
+namespace DesignPatterns.Behavioral.State
+{
+    public class Order
+    {
+        public Order()
+        {
+            Status = new PendingStatus(this);
+        }
+
+        public OrderStatus Status { get; set; }
+
+        public void Confirm()
+        {
+            Status.Confirm();
+        }
+
+        public void Cancel()
+        {
+            Status.Cancel();
+        }
+    }
+}
+```
+- Declare a interface do estado, colocando métodos que contenham comportamentos específico ao estado.
+
+```csharp
+namespace DesignPatterns.Behavioral.State
+{
+    public abstract class OrderStatus
+    {
+        private readonly Order _order;
+
+        public OrderStatus(Order order)
+        {
+            _order = order;
+        }
+
+        public abstract string Value { get; set; }
+
+        public abstract void Confirm();
+
+        public abstract void Cancel();
+    }
+}
+```
+
+- Para cada estado, crie uma classe concreta que deriva da interface do estado. Então, extraia todo o conteúdo do contexto e coloque nessa classe.
+
+```csharp
+namespace DesignPatterns.Behavioral.State
+{
+    public class PendingStatus : OrderStatus
+    {
+        private readonly Order _order;
+
+        public PendingStatus(Order order)
+            : base(order)
+        {
+            _order = order;
+            Value = "Pending";
+        }
+
+        public override string Value { get; set; } = null!;
+
+        public override void Confirm()
+        {
+            _order.Status = new ConfirmedStatus(_order);
+        }
+
+        public override void Cancel()
+        {
+            _order.Status = new CancelledStatus(_order);
+        }
+    }
+}
+
+namespace DesignPatterns.Behavioral.State
+{
+    public class ConfirmedStatus : OrderStatus
+    {
+        private readonly Order _order;
+
+        public ConfirmedStatus(Order order)
+            : base(order)
+        {
+            Value = "Confirmed";
+            _order = order;
+        }
+
+        public override string Value { get; set; } = null!;
+
+        public override void Confirm()
+        {
+            throw new Exception("The order is already confirmed!");
+        }
+        
+        public override void Cancel()
+        {
+            _order.Status = new CancelledStatus(_order);
+        }
+    }
+}
+
+namespace DesignPatterns.Behavioral.State
+{
+    public class CancelledStatus : OrderStatus
+    {
+        private readonly Order _order;
+
+        public CancelledStatus(Order order)
+            : base(order)
+        {
+            _order = order;
+            Value = "Cancelled";
+        }
+
+        public override string Value { get; set; }
+
+        public override void Confirm()
+        {
+            throw new Exception("The order is already cancelled!");
+        }
+
+        public override void Cancel()
+        {
+            throw new Exception("The order is already cancelled!");
+        }
+    }
+}
+
+using DesignPatterns.Behavioral.State;
+using FluentAssertions;
+
+namespace DesignPatterns.Tests.State
+{
+    public class OrderStatusTests
+    {
+        [Test]
+        public void ShouldBeAbleToCreateAnPedingStatus()
+        {
+            var order = new Order();
+            order.Status.Value.Should().Be("Pending");
+        }
+
+        [Test]
+        public void ShouldBeAbleToChangeOrderStatusToConfirmed()
+        {
+            var order = new Order();
+            order.Confirm();
+
+            order.Status.Value.Should().Be("Confirmed");
+        }
+
+        [Test]
+        public void ShouldBeAbleToChangeOrderStatusToCancelled()
+        {
+            var order = new Order();
+            order.Cancel();
+
+            order.Status.Value.Should().Be("Cancelled");
+        }
+
+        [Test]
+        public void ShouldNotBeAbleToChangeOrderStatusToConfirmedIfTheOrderHasAlreadyBeenCancelled()
+        {
+            var order = new Order();
+            order.Cancel();
+
+            order.Invoking(o => o.Confirm())
+                .Should().Throw<Exception>()
+                .WithMessage("The order is already cancelled!");
+        }
+    }
+}
+```
 
 ## 🧪 Techs
 
