@@ -1917,6 +1917,20 @@ namespace DesignPatterns.Tests.Observer
 }
 ```
 
+### State ###
+- 
+**Exemplos**
+-  
+
+**PROS**
+-
+
+**CONS**
+-
+
+**Como implementar?**
+- 
+
 ## 🧪 Techs
 
 This project was develop with the following technologies:
