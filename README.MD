@@ -1938,7 +1938,11 @@ namespace DesignPatterns.Tests.Observer
 - A aplicação pode ser over-engineer se a classe não tiver muito estados ou se raramente os status mudam.
 
 **Como implementar?**
-- 
+- Decida qual classe vai agir como contexto. Pode ser uma classe existente que já tenha código dependente do estado.
+- Declare a interface do estado, colocando métodos que contenham comportamentos específico ao estado.
+- Para cada estado, crie uma classe concreta que deriva da interface do estado. Então, extraia todo o conteúdo do contexto e coloque nessa classe.
+- Na classe contexto, adicione um campo de referência do tipo interface do estado e um setter público que permite sobrescrever o valor daquele campo.
+- Para trocar o estado do contexto, crie uma instância de uma das classes de estado e passe para o contexto. Pode ser feito dentro do próprio contexto, ou em vários estados, ou no cliente. Lembre-se que a classe se torna dependente da classe concretaa de estado que ela instanciou.
 
 ## 🧪 Techs
 
