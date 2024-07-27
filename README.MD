@@ -544,19 +544,118 @@ namespace DesignPatterns.Tests.AbstractFactory
 
 ### Prototype ###
 - Prototype é um padrão de projeto criacional que permite copiar objetos sem depender das suas classes.
+- Permite que você clone objetos privados sem a dependência da classe concreta, ao contrário da abordagem direta passando campo a campo para um novo objeto.
+- Delega o processo de clonagem para o próprio objeto.
+- Utilize o padrão quando seu código não puder depender da classe concreta que você deseja copiar.
+- Utilize o padrão quando você tem muitas subclasses que só diferem na forma que inicializam seus objetos.
+- O padrão pode ser útil para quando você precisa salvar cópias de comandos (Command - padrão de projeto) no histórico.
+- Algumas vezes pode ser uma alternativa ao padrão de projeto Memento.
 
 **Exemplos**:
-- 
+- Editor de gráficos ou imagens, pois pode ser feita a cópia de círculos, quadrados, linhas e etc.
+- Algumas configurações da aplicação pesadas podem se benefeciar do uso do Prototype para um carregamento mais rápido.
+- Jogos, pois você pode copiar as características de um personagem.
+- Sistemas de gerenciamento de documentos, pois muitas vezes esses documentos tem pequenas variações.
 
 **PROS**
-- 
+- Clonar objetos sem dependência da classe concreta.
+- Evitar códigos de inicialização repetidos.
+- Facilidade para construção de objetos complexos.
 
 **CONS**
-- 
+- Clonar objetos com referências circulares pode ser difícil.
 
 **Como implementa?**
-- 
+- Crie a interface do Prototype com um método clone.
 
+```csharp
+namespace DesignPatterns.Creational.Prototype
+{
+    public interface IVehiclePrototype
+    {
+        IVehiclePrototype Clone();
+    }
+}
+```
+
+- Uma classe Prototype deve definir o construtor alternativo que aceita os objetos da classe como argumento. O construtor deve copiar os valores de todos os campos definidos na classe do objeto passado para a nova instância.
+- O método de clonagem consiste em uma linha executando um operador new com a versão do protótipo do construtor ou no nosso caso, usando o método MemberWiseClone para clonar o objeto.
+
+```csharp
+namespace DesignPatterns.Creational.Prototype
+{
+    public class Car : IVehiclePrototype
+    {
+        public string Model { get; private set; }
+
+        public string Color { get; private set; }
+
+        public int Seats { get; private set; }
+
+        public Car(string model, string color, int seats)
+        {
+            Model = model;
+            Color = color;
+            Seats = seats;
+        }
+
+        public IVehiclePrototype Clone()
+        {
+            return (IVehiclePrototype)MemberwiseClone();
+        }
+
+        public void SetColor(string color)
+        {
+            Color = color;
+        }
+
+        public override string ToString()
+        {
+            return $"Car: {Model}, Color: {Color}, Seats: {Seats}";
+        }
+    }
+}
+
+using DesignPatterns.Creational.Prototype;
+using FluentAssertions;
+using FluentAssertions.Execution;
+
+namespace DesignPatterns.Tests.Prototype
+{
+    public class CarTests
+    {
+        [Test]
+        public void ShouldBeAbleToCloneAnExactlyCopyOfTheCar()
+        {
+            var car = new Car("Toyota Camry", "Red", 5);
+
+            var clonedCar = car.Clone() as Car;
+
+            using (new AssertionScope())
+            {
+                car.Model.Should().Be(clonedCar!.Model);
+                car.Color.Should().Be(clonedCar.Color);
+                car.Seats.Should().Be(clonedCar.Seats);
+            }
+        }
+
+        [Test]
+        public void ShouldBeAbleToCloneAndModifyWithoutAffectingTheOriginalCar()
+        {
+            var car = new Car("Toyota Camry", "Red", 5);
+
+            var clonedCar = car.Clone() as Car;
+            clonedCar!.SetColor("Blue");
+
+            using (new AssertionScope())
+            {
+                car.Color.Should().Be("Red");
+                clonedCar.Color.Should().Be("Blue");
+            }
+        }
+    }
+}
+```
 ### Singleton ###
 - O Singleton é um padrão de projeto criacional que permite que a classe tenha apenas uma instância, enquanto provê um ponto de acesso global para cada instância.
 - Utilize o padrão Singleton quando uma classe deve ter apenas uma instância disponível.
