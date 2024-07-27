@@ -27,9 +27,9 @@ namespace DesignPatterns.Tests.Facade
         {
             _inventoryService.CheckStock(Arg.Any<string>()).Returns(false);
 
-            var result = _ecommerceFacade.PlaceOrder("Produto123", 2, "1233331313", "Rua Horacio");
+            var placeOrder = _ecommerceFacade.PlaceOrder("Produto123", 2, "1233331313", "Rua Horacio");
 
-            result.Should().BeFalse();
+            placeOrder.Should().BeFalse();
         } 
     }
 }
