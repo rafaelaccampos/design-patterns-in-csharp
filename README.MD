@@ -531,12 +531,102 @@ namespace DesignPatterns.Tests.AbstractFactory
         {
             var view = new View(new DarkThemeFactory());
 
-            using(new AssertionScope())
+            using (new AssertionScope())
             {
                 view.Label.Color.Should().Be("white");
                 view.Button.Color.Should().Be("white");
                 view.Button.BackgroundColor.Should().Be("black");
             }
+        }
+    }
+}
+```
+
+### Singleton ###
+- O Singleton é um padrão de projeto criacional que permite que a classe tenha apenas uma instância, enquanto provê um ponto de acesso global para cada instância.
+- Utilize o padrão Singleton quando uma classe deve ter apenas uma instância disponível.
+- Utilize o padrão quando você quiser um controle mais estrito sobre as variáveis globais.
+
+**Exemplos**
+- Configurações do sistema.
+- Conexões com o banco de dados.
+- Escrita de logs.
+
+**PROS**
+- Garantia de que a classe só vai ter uma instância.
+- Acesso global a instância.
+- O objeto é inicializado somente quando é chamado pela primeira vez.
+
+**CONS**
+- Viola o princípio da responsabilidade única, pois resolve dois problemas de uma vez só: garantir que uma classe só tenha uma instância e fornece um ponto de acesso global a instância.
+- Pode fazer com que as classes do programa conheçam muito sobre cada uma.
+- Requer cuidado quando está se trabalhando com multithread, pois pode criar o objeto Singleton múltiplas vezes.
+- Pode ser difícil de testar, uma vez que oculta o construtor privado e muitos frameworks utilizam herança para produzirem objetos simulados.
+
+**Como implementar?**
+- Adicione um campo privado estático para o armazenamento da instância Singleton.
+- Declare um método de criação público estático para obter a instância do Singleton.
+- Faça o construtor "vazio" ser privado.
+
+```csharp
+namespace DesignPatterns.Creational.Singleton
+{
+    public class BusinessHours
+    {
+        private static BusinessHours _instance = null!;
+        
+        private BusinessHours(DateTime startTime, DateTime endTime)
+        {
+            StartTime = startTime;
+            EndTime = endTime;
+        }
+
+
+        public DateTime StartTime { get; private set; }
+
+        public DateTime EndTime { get; private set; }
+
+        public static BusinessHours GetInstance()
+        {
+            if (_instance == null)
+            {
+                _instance = new BusinessHours(
+                    new DateTime(1, 1, 1, new Random().Next(0, 10), 0, 0),
+                    new DateTime(1, 1, 1, new Random().Next(18, 24), 0, 0)
+                    );
+            }
+
+            return _instance;
+        }
+    }
+}
+```
+
+- Mude todas as chamadas diretas para o construtor do Singleton chamando o método de criação estático.
+
+```csharp
+using DesignPatterns.Creational.Singleton;
+using FluentAssertions;
+
+namespace DesignPatterns.Tests.Singleton
+{
+    public class BusinessHoursTests
+    {
+        [Test]
+        public void ShouldBeAbleToGetAnInstance()
+        {
+            var instance = BusinessHours.GetInstance();
+            
+            instance.Should().NotBeNull();
+        }
+
+        [Test]
+        public void ShouldBeAbleToCheckIfInstancesAreTheSame()
+        {
+            var firstIntance = BusinessHours.GetInstance();
+            var secondIntance = BusinessHours.GetInstance();
+
+            firstIntance.Should().Be(secondIntance);
         }
     }
 }
