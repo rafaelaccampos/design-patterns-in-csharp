@@ -542,6 +542,21 @@ namespace DesignPatterns.Tests.AbstractFactory
 }
 ```
 
+### Prototype ###
+- Prototype é um padrão de projeto criacional que permite copiar objetos sem depender das suas classes.
+
+**Exemplos**:
+- 
+
+**PROS**
+- 
+
+**CONS**
+- 
+
+**Como implementa?**
+- 
+
 ### Singleton ###
 - O Singleton é um padrão de projeto criacional que permite que a classe tenha apenas uma instância, enquanto provê um ponto de acesso global para cada instância.
 - Utilize o padrão Singleton quando uma classe deve ter apenas uma instância disponível.

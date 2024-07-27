@@ -27,7 +27,7 @@ namespace DesignPatterns.Tests.Prototype
             var car = new Car("Toyota Camry", "Red", 5);
 
             var clonedCar = car.Clone() as Car;
-            clonedCar!.Color = "Blue";
+            clonedCar!.SetColor("Blue");
 
             using (new AssertionScope())
             {

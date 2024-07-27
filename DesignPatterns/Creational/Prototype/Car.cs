@@ -2,11 +2,11 @@
 {
     public class Car : IVehiclePrototype
     {
-        public string Model { get; set; }
+        public string Model { get; private set; }
 
-        public string Color { get; set; }
+        public string Color { get; private set; }
 
-        public int Seats { get; set; }
+        public int Seats { get; private set; }
 
         public Car(string model, string color, int seats)
         {
@@ -18,6 +18,11 @@
         public IVehiclePrototype Clone()
         {
             return (IVehiclePrototype)MemberwiseClone();
+        }
+
+        public void SetColor(string color)
+        {
+            Color = color;
         }
 
         public override string ToString()
