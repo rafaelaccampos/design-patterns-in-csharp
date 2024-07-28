@@ -762,7 +762,7 @@ namespace DesignPatterns.Tests.Singleton
 **CONS**
 - A complexidade do código aumenta porque é introduzido muitas novas interfaces e classes.
 
-**Como implementa?**
+**Como implementar?**
 - Cria uma interface que descreve o contrato que outras classes devem seguir.
 
 ```csharp
@@ -904,6 +904,171 @@ namespace DesignPatterns.Structural.Adapter.Adapter_Transaction
         }
 ```
 ---
+
+### Decorator ou Wrapper ###
+- O Decorator é um padrão de projeto estrutural que permite que você adicione novos comportamentos a um objeto ao envolvê-lo num wrapper que contém os comportamentos.
+- Dinamicamente agrega funcionalidades adicionais ao objeto. Fornece uma alternativa flexível ao uso de subclasses.
+- O Decorator é estruturado com base na **agregação** e **composição**. Essa abordagem permite que um objeto possa usar o comportamento de várias classes, ter referência a múltiplos objetos e delegue qualquer trabalho a eles.
+- Utilize o padrão quando você precisa adicionar comportamentos para objetos em tempo de execução sem quebrar o código que usa esses objetos.
+- Utilize o padrão quando é complicado ou impossível usar herança para estender um comportamento.
+
+**Exemplos**:
+- Biblioteca de notificação que precisa enviar a mesma notificação por múltiplos canais (SMS, E-mail, Instagram, Facebook). Nesse caso, tem uma classe Notificador com método enviar e as demais classes SMS, E-mail, Instagram e Facebook são decorators.
+- Para conseguir customizar logs da aplicação. 
+
+**PROS**
+- Pode estender o comportamento de um objeto sem fazer uma nova subclasse.
+- Adicionar ou remover comportamentos de um objeto no momento da execução.
+- Combinar comportamentos ao envolver o projeto com múltiplos decorators.
+- Princípio da responsabilidade única: Pode dividir uma classe que implementa muitos comportamentos em classes menores. 
+
+**CONS**
+- É difícil remover um wrapper de uma pilha de wrappers.
+- É difícil implementar um decorator que seu comportamento não dependa da ordem da pilha de decorators. 
+
+**Como implementar?**
+- Descubra quais métodos são comuns para o componente e para as camadas opcionais. Crie uma interface componente e declare os métodos.
+- Crie uma classe componente concreta e defina o comportamento base nela.
+
+```csharp
+namespace DesignPatterns.Structural.Decorator
+{
+    public class Input
+    {
+        public string Cpf { get; set; }
+        public IList<Item> Items { get; set; }
+    }
+
+    public class Item
+    {
+        public int Id { get; set; }
+        public int Count { get; set; }
+    }
+}
+
+namespace DesignPatterns.Structural.Decorator
+{
+    public interface IUseCase
+    {
+        public void Execute(Input input);
+    }
+}
+namespace DesignPatterns.Structural.Decorator
+{
+    public class PlaceOrder : IUseCase
+    {
+        public void Execute(Input input)
+        {
+            Console.WriteLine($"Executando o place order {input}");
+        }
+    }
+}
+namespace DesignPatterns.Structural.Decorator
+{
+    public class SimulateFreight : IUseCase
+    {
+        public void Execute(Input input)
+        {
+            Console.WriteLine($"Executando o simulate freight: {input}");
+        }
+    }
+}
+namespace DesignPatterns.Structural.Decorator
+{
+    public class ValidateCoupon : IUseCase
+    {
+        public void Execute(Input input)
+        {
+            Console.WriteLine($"Executando o validate coupon {input}"); 
+        }
+    }
+}
+```
+
+- Crie uma classe decorator base. Ela deve ter um campo para armazenar uma referência ao objeto envolvido. O campo deve ser declarado com o tipo da interface componente para permitir uma ligação entre os componentes concretos e decoradores. O decorador base deve delegar todo o trabalho para ao objeto envolvido.
+
+```csharp
+namespace DesignPatterns.Structural.Decorator
+{
+    public class LoggerUseCaseDecorator : IUseCase
+    {
+        private readonly IUseCase _useCase;
+
+        public LoggerUseCaseDecorator(IUseCase useCase)
+        {
+            _useCase = useCase;    
+        }
+
+        public void Execute(Input input)
+        {
+            Console.WriteLine("Executando decorator de Log");
+            _useCase.Execute(input);
+        }
+    }
+}
+```
+
+- Crie decoradores concretos estendendo-os a partir do decorador base. Um decorador concreto deve executar seu comportamento antes ou depois da chamada para o método pai, que delega o comportamento para o objeto envolvido.
+
+```csharp
+using System.Diagnostics;
+
+namespace DesignPatterns.Structural.Decorator
+{
+    public class PerformanceUseCaseDecorator : IUseCase
+    {
+        private readonly IUseCase _useCase;
+
+        public PerformanceUseCaseDecorator(IUseCase useCase)
+        {
+            _useCase = useCase;
+        }
+
+        public void Execute(Input input)
+        {
+            var stopWatch = new Stopwatch();
+
+            stopWatch.Start();
+            _useCase.Execute(input);
+            stopWatch.Stop();
+
+            Console.WriteLine($"Performance: {stopWatch.Elapsed}");
+        }
+    }
+}
+```
+- O cliente deve ser responsável por criar decoradores e compô-los da maneira desejada.
+
+```csharp
+using DesignPatterns.Structural.Decorator;
+
+namespace DesignPatterns.Tests.Decorator
+{
+    public class DecoratorTests
+    {
+        [Test]
+        public void ShouldBeAbleToLogOperationsInAUseCase()
+        {
+            var input = new Input
+            {
+                Cpf = "111111111",
+                Items = new List<Item>
+                {
+                    new Item { Id = 1, Count = 1 },
+                    new Item { Id = 2, Count = 1 },
+                    new Item { Id = 3, Count = 3 },
+                }
+            };
+
+            var placeOrder = new LoggerUseCaseDecorator(new PerformanceUseCaseDecorator(new PlaceOrder()));
+            placeOrder.Execute(input);
+
+            var simulateFreight = new LoggerUseCaseDecorator(new PerformanceUseCaseDecorator(new SimulateFreight()));
+            simulateFreight.Execute(input);
+        }
+    }
+}
+```
 
 ## Behavioral
 
