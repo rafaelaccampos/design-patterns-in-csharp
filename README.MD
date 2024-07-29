@@ -1070,6 +1070,34 @@ namespace DesignPatterns.Tests.Decorator
 }
 ```
 
+### Proxy ###
+- O Proxy é um padrão de projeto estrutural que permite que você forneça um substituto e controla o acesso ao objeto original, permitindo que você faça algo antes ou depois do pedido chegar no objeto original.
+- Ao contrário do Facade, o Proxy tem o mesma interface que seu objeto de serviço.
+- Ao contrário do Decorator, que o ciclo de vida é gerenciado pelo cliente, o Proxy geralmente gerencia o ciclo de vida de seu objeto serviço.
+- Utilize o padrão quando você precisa de uma inicialização preguiçosa, quando o objeto é muito pesado e gasta muitos recursos do sistema por estar sempre rodando.
+- Controle de acesso, o proxy pode passar o request somente se as credenciais coincidirem com os critérios.
+- Execução de um serviço remoto (proxy remoto), nesse caso o proxy lida com toda a parte de redes.
+- Execução de cache de resultado de pedidos.
+- Referência inteligente para analisar quando deve dispensar um objeto que utiliza recursos muito pesados, mas não está sendo utilizado.
+
+**Exemplos**:
+- Um conversor que traduz json para xml e vice-versa antes de enviar para os objetos reais.
+- Proxy de cache que armazena em cache resultados de consulta para evitar consumir a API real desnecessariamente.
+- Proxy de segurança que controla o acesso com base nas permissões antes de permitir consumir uma API. 
+
+**PROS**
+- Pode controlar o objeto do serviço sem os clientes ficarem sabendo.
+- Pode gerenciar o ciclo de vida de um objeto do serviço, quando os clientes não precisam mais dele.
+- Pode trabalhar quando o objeto do serviço não está pronto ou indisponível.
+- Princípio aberto e fechado: Pode introduzir novos proxies sem mudar o serviço ou clientes.
+
+**CONS**
+- O código pode ficar mais complexo, já que você precisa introduzir novas classes.
+- Pode ter delay na resposta de um serviço.
+
+**Como implementar?**
+- 
+
 ## Behavioral
 
 ### Chain of Responsability ###
