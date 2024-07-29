@@ -1096,7 +1096,112 @@ namespace DesignPatterns.Tests.Decorator
 - Pode ter delay na resposta de um serviço.
 
 **Como implementar?**
-- 
+- Crie uma interface o objeto proxy e o serviço serem intercomunicáveis. Quando não for possível faça proxy ser uma subclasse do serviço.
+- Crie a classe proxy que contém um campo de referência para o serviço. Proxies costumam gerenciar todo o ciclo de vida, sendo em raras ocasiões, um serviço passado ao proxy atráves do construtor do cliente.
+- Implemente os métodos proxy e após a realização do trabalho, delegue o trabalho para o objeto serviço.
+
+```csharp
+namespace DesignPatterns.Structural.Proxy
+{
+    public class Customer
+    {
+        public Customer(string fullName, DateTime birthDate)
+        {
+            FullName = fullName;
+            BirthDate = birthDate;
+        }
+
+        public string FullName { get; private set; }
+
+        public DateTime BirthDate { get; private set; }
+    }
+}
+using Microsoft.Extensions.Caching.Memory;
+
+namespace DesignPatterns.Structural.Proxy
+{
+    public interface IMemoryCacheWrapper
+    {
+        object GetOrCreate(string key, Func<ICacheEntry, object> cacheFactory);
+    }
+}
+using Microsoft.Extensions.Caching.Memory;
+
+namespace DesignPatterns.Structural.Proxy
+{
+    public class MemoryCacheWrapper : IMemoryCacheWrapper
+    {
+        private readonly IMemoryCache _memoryCache;
+        public MemoryCacheWrapper(IMemoryCache memoryCache)
+        {
+            _memoryCache = memoryCache;
+        }
+        public object GetOrCreate(string key, Func<ICacheEntry, object> cacheFactory)
+        {
+            return _memoryCache.GetOrCreate(key, cacheFactory)!;
+        }
+    }
+}
+namespace DesignPatterns.Structural.Proxy
+{
+    public class CustomerRepository
+    {
+        public virtual IList<Customer> GetBlockedUsers()
+        {
+            return new List<Customer>
+            {
+                new Customer("Fulano", DateTime.Now.AddYears(-20)),
+                new Customer("Fulano", DateTime.Now.AddYears(-30)),
+                new Customer("Fulano", DateTime.Now.AddYears(-40))
+            };
+        }
+    }
+}
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Memory;
+
+namespace DesignPatterns.Structural.Proxy
+{
+    public class CustomerRepositoryProxy
+    {
+        private readonly CustomerRepository _customerRepository;
+        private readonly IMemoryCacheWrapper _cache;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public CustomerRepositoryProxy(
+            CustomerRepository customerRepository,
+            IMemoryCacheWrapper cache,
+            IHttpContextAccessor httpContextAccessor)
+        {
+            _customerRepository = customerRepository;
+            _cache = cache;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        public IList<Customer?> GetBlockedUsers()
+        {
+            var httpContext = _httpContextAccessor?.HttpContext;
+
+            if(httpContext == null)
+            {
+                return null!;
+            }
+
+            if(httpContext.Request.Headers["x-role"] != "admin")
+            {
+                return null!;
+            }
+
+            var blockedCustomers = (IList<Customer?>)_cache.GetOrCreate("blocked-customers", c =>
+            {
+                return _customerRepository.GetBlockedUsers();
+            });
+
+            return blockedCustomers!;
+        }
+    }
+}
+```
 
 ## Behavioral
 

@@ -54,12 +54,7 @@ namespace DesignPatterns.Tests.Proxy
             _httpContext.Request.Headers["x-role"] = "user";
             _httpContextAccessor.HttpContext.Returns(_httpContext);
 
-            var expectedBlockedUsers = new List<Customer>
-            {
-                new Customer("Fulano", DateTime.Now.AddYears(-20))
-            };
-
-            _customerRepository.GetBlockedUsers().Returns(expectedBlockedUsers);
+            _customerRepository.GetBlockedUsers().ReturnsNull();
             _memoryCacheWrapper.GetOrCreate("blocked-customers", Arg.Any<Func<ICacheEntry, object>>()).ReturnsNull();
 
             var customerRepositoryProxy = new CustomerRepositoryProxy(
