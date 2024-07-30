@@ -1203,6 +1203,24 @@ namespace DesignPatterns.Structural.Proxy
 }
 ```
 
+
+### Flyweight ###
+- Flyweight é um padrão de projeto estrutural que permite otimizar o uso de objetos alocados na memória RAM, compartilhando estados comuns entre os objetos, ao invés de criar um para cada objeto.
+- Utilize o padrão Flyweight apenas quando seu programa deve suportar um grande números de objetos que não cabe na memória RAM.
+
+**Exemplos**:
+- 
+
+**PROS**
+- Pode economizar muita RAM, desde que o sistema tenha muitos objetos similares.
+
+**CONS**
+- Pode estar trocando RAM por ciclos de CPU quando parte dos dados de contexto precisa ser recalculado cada vez que é chamado um método flyweight.
+- O código fica mais complexo, nem sempre é fácil perceber porque existe uma separação dos estados.
+
+**Como implementar?**
+
+
 ## Behavioral
 
 ### Chain of Responsability ###
