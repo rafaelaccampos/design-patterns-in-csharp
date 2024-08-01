@@ -1209,7 +1209,8 @@ namespace DesignPatterns.Structural.Proxy
 - Utilize o padrão Flyweight apenas quando seu programa deve suportar um grande números de objetos que não cabe na memória RAM.
 
 **Exemplos**:
-- 
+- Renderização de gráficos e textos para reduzir o consumo de memória, reaproveitando a forma ou a fonte em outros objetos.
+- Gestão de estados de jogos para armazenar as partes imutáveis dos objetos, como modelo 3D, textura em uma instância compartilhada.
 
 **PROS**
 - Pode economizar muita RAM, desde que o sistema tenha muitos objetos similares.
