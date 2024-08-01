@@ -1207,6 +1207,7 @@ namespace DesignPatterns.Structural.Proxy
 ### Flyweight ###
 - Flyweight é um padrão de projeto estrutural que permite otimizar o uso de objetos alocados na memória RAM, compartilhando estados comuns entre os objetos, ao invés de criar um para cada objeto.
 - Utilize o padrão Flyweight apenas quando seu programa deve suportar um grande números de objetos que não cabe na memória RAM.
+- Lembre-se de sempre separar os estados mutáveis dos imutáveis, o padrão deve ser aplicado para estados imutáveis.
 
 **Exemplos**:
 - Renderização de gráficos e textos para reduzir o consumo de memória, reaproveitando a forma ou a fonte em outros objetos.
@@ -1220,6 +1221,13 @@ namespace DesignPatterns.Structural.Proxy
 - O código fica mais complexo, nem sempre é fácil perceber porque existe uma separação dos estados.
 
 **Como implementar?**
+- Divida os campos de uma classe que vai se tornar um flyweight em duas partes:
+    - estado intrínseco: os campos que contém dados imutáveis e duplicados em muitos objetos.
+    - estado extrínseco: os campos que contém dados únicos para cada objeto.
+- Deixe os campos imutáveis dentro da classe, certifique-se de que eles não são mutáveis. Eles só podem obter valor inicial por meio do construtor.
+- Para os métodos que usam campos para obter os dados mutáveis introduza um novo parâmetro e use-o ao invés do campo.
+- Opcionalmente pode-se criar uma factory para gerenciar o conjunto de flyweights e checar-se se já existe antes de criar um novo. Os clientes devem pedir flyweights a partir da fábrica.
+- O cliente deve armazenar ou calcular valores para o estado extrínseco (contexto) para ser capaz de chamar métodos do objetos flyweight.
 
 
 ## Behavioral
