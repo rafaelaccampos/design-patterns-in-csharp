@@ -1227,8 +1227,97 @@ namespace DesignPatterns.Structural.Proxy
 - Deixe os campos imutáveis dentro da classe, certifique-se de que eles não são mutáveis. Eles só podem obter valor inicial por meio do construtor.
 - Para os métodos que usam campos para obter os dados mutáveis introduza um novo parâmetro e use-o ao invés do campo.
 - Opcionalmente pode-se criar uma factory para gerenciar o conjunto de flyweights e checar-se se já existe antes de criar um novo. Os clientes devem pedir flyweights a partir da fábrica.
+
+```csharp
+namespace DesignPatterns.Structural.Flyweight
+{
+    public enum PaymentMethod
+    {
+        Unknown = 0,
+        CreditCard = 1,
+        PaymentSlip = 2,
+        PayPal = 3,
+    }
+}
+namespace DesignPatterns.Structural.Flyweight
+{
+    public class PaymentMethodDetails
+    {
+        public PaymentMethodDetails(
+            string guidanceText,
+            decimal? minimumValue,
+            decimal? maximumValue)
+        {
+            GuidanceText = guidanceText;
+            MinimumValue = minimumValue;
+            MaximumValue = maximumValue;
+        }
+
+        public string GuidanceText { get; set; }
+
+        public decimal? MinimumValue { get; set; }
+
+        public decimal? MaximumValue { get; set; }
+    }
+}
+namespace DesignPatterns.Structural.Flyweight
+{
+    public class PaymentsMethodFactory
+    {
+        private Dictionary<PaymentMethod, PaymentMethodDetails> _paymentMethods;
+
+        public PaymentsMethodFactory()
+        {
+            _paymentMethods = new Dictionary<PaymentMethod, PaymentMethodDetails>
+            {
+                { PaymentMethod.CreditCard, new PaymentMethodDetails("Sobre o Cartão de Crédito!", 1, null) },
+                { PaymentMethod.PaymentSlip, new PaymentMethodDetails("Sobre o Boleto!", 10, 1000) },
+                { PaymentMethod.PayPal, new PaymentMethodDetails("Sobre o PayPal!", 16.5m, null) },
+            };
+        }
+
+        public PaymentMethodDetails GetPaymentMethod(PaymentMethod paymentMethod)
+        {
+            return _paymentMethods[paymentMethod];
+        }
+    }
+}
+```
+
 - O cliente deve armazenar ou calcular valores para o estado extrínseco (contexto) para ser capaz de chamar métodos do objetos flyweight.
 
+```csharp
+using DesignPatterns.Structural.Flyweight;
+using FluentAssertions;
+
+namespace DesignPatterns.Tests.Flyweight
+{
+    public class FlyweightTests
+    {
+        [Test]
+        public void ShouldBeAbleToReturnTheSameInstanceForTheSamePaymentMethod()
+        {
+            var paymentMethodFactory = new PaymentsMethodFactory();
+
+            var firstCreditCard = paymentMethodFactory.GetPaymentMethod(PaymentMethod.CreditCard);
+            var secondCreditCard = paymentMethodFactory.GetPaymentMethod(PaymentMethod.CreditCard);
+
+            firstCreditCard.Should().Be(secondCreditCard);
+        }
+
+        [Test]
+        public void ShouldBeAbleToReturnDifferentInstancesForDifferentPaymentMethods()
+        {
+            var paymentFactory = new PaymentsMethodFactory();
+
+            var paymentSlip = paymentFactory.GetPaymentMethod(PaymentMethod.CreditCard);
+            var payPal = paymentFactory.GetPaymentMethod(PaymentMethod.PayPal);
+
+            paymentSlip.Should().NotBe(payPal);
+        }
+    }
+}
+```
 
 ## Behavioral
 
