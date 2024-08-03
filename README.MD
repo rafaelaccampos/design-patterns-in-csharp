@@ -1518,6 +1518,203 @@ namespace DesignPatterns.Tests.Bridge
 }
 ```
 
+### Facade ###
+- O Facade é um padrão de projeto estrutural que fornece uma interface simples para um subsistema complexo.
+- Utilize o padrão quando você precisa de uma interface limitada, mas simples para um subsistema complexo.
+- Utilize o padrão quando você quer estruturar um subsistema em camadas.
+- Um exemplo do mundo real é ligar e desligar o computador que nós só interagimos com o botão, mas existe todo um subsistema contido nessas duas funcionalidades.
+- O Facade envolve um subsistema inteiro de objetos, enquanto o Adapter envolve um objeto.
+
+**Exemplos**:
+- Ecommerce, pois pode envolver múltiplos subsistemas como: gestão de pedidos, pagamento, inventário, envio e etc.
+- Integração com APIs externas (geolocalização, serviços de pagamento).
+
+**PROS**
+- Pode isolar seu código da complexidade de um subsistema.
+
+**CONS**
+- Pode se tornar um objeto Deus que acopla todas as classes de uma aplicação.
+
+**Como implementar?**
+- Crie uma interface mais simples do que o subsistema já fornece.
+
+```csharp
+namespace DesignPatterns.Structural.Facade
+{
+    public interface IInventoryService
+    {
+        bool CheckStock(string productId);
+    }
+}
+namespace DesignPatterns.Structural.Facade
+{
+    public class InventoryService : IInventoryService
+    {
+        public bool CheckStock(string productId)
+        {
+            return true;
+        }
+    }
+}
+
+namespace DesignPatterns.Structural.Facade
+{
+    public interface IPaymentService
+    {
+        bool ProcessPayment(string creditCardNumber, decimal amount);
+    }
+}
+namespace DesignPatterns.Structural.Facade
+{
+    public class PaymentService : IPaymentService
+    {
+        public bool ProcessPayment(string creditCardNumber, decimal amount)
+        {
+            return true;
+        }
+    }
+}
+
+namespace DesignPatterns.Structural.Facade
+{
+    public interface IShippingService
+    {
+        decimal CalculateShippingCost(string address);
+
+        string GenerateShippingLabel(string address);
+    }
+}
+namespace DesignPatterns.Structural.Facade
+{
+    public class ShippingService : IShippingService
+    {
+        public decimal CalculateShippingCost(string address)
+        {
+            return 10.0m;
+        }
+
+        public string GenerateShippingLabel(string address)
+        {
+            return "EtiquetaDeEnvio2024";
+        }
+    }
+}
+
+```
+
+- Declare e implemente essa interface em uma nova classe Facade. A classe Facade deve redirecionar as chamadas para os códigos apropriados do subsistema.
+
+```csharp
+namespace DesignPatterns.Structural.Facade
+{
+    public class EcommerceFacade
+    {
+        private readonly IPaymentService _paymentService;
+        private readonly IShippingService _shippingService;
+        private readonly IInventoryService _inventoryService;
+
+        public EcommerceFacade(
+            IPaymentService paymentService, 
+            IShippingService shippingService, 
+            IInventoryService inventoryService)
+        {
+            _paymentService = paymentService;
+            _shippingService = shippingService;
+            _inventoryService = inventoryService;
+        }
+
+        public bool PlaceOrder(
+            string productId, 
+            int quantity, 
+            string creditCardNumber, 
+            string address)
+        {
+            if(!_inventoryService.CheckStock(productId))
+            {
+                return false;
+            }
+
+            var paymentSucessful = _paymentService.ProcessPayment(creditCardNumber, quantity * 100);
+
+            if(!paymentSucessful)
+            {
+                return false;
+            }
+
+            var shippingCost = _shippingService.CalculateShippingCost(address);
+            var shippingLabel = _shippingService.GenerateShippingLabel(address);
+
+            return true;
+        }
+    }
+}
+```
+- Faça todo o código do cliente se comunicar com o subsistema apenas atráves da Facade.
+
+```csharp
+using DesignPatterns.Structural.Facade;
+using FluentAssertions;
+using FluentAssertions.Execution;
+using NSubstitute;
+
+namespace DesignPatterns.Tests.Facade
+{
+    [TestFixture]
+    public class EcommerceFacadeTests
+    {
+        private IPaymentService _paymentService;
+        private IShippingService _shippingService;
+        private IInventoryService _inventoryService;
+        private EcommerceFacade _ecommerceFacade;
+
+        [SetUp] 
+        public void SetUp()
+        {
+            _paymentService = Substitute.For<IPaymentService>();
+            _shippingService = Substitute.For<IShippingService>();
+            _inventoryService = Substitute.For<IInventoryService>();
+
+            _ecommerceFacade = new EcommerceFacade(_paymentService, _shippingService, _inventoryService);
+        }
+
+        [Test]
+        public void ShouldReturnFalseWhenProductIsOutOfStock()
+        {
+            _inventoryService.CheckStock(Arg.Any<string>()).Returns(false);
+
+            var placeOrder = _ecommerceFacade.PlaceOrder("Produto123", 2, "1233331313", "Rua Horacio");
+
+            placeOrder.Should().BeFalse();
+        }
+
+        [Test]
+        public void ShouldReturnTrueWhenAllServicesSucceed()
+        {
+            var inventoryService = Substitute.For<IInventoryService>();
+            var paymentService = Substitute.For<IPaymentService>();
+            var shippingService = Substitute.For<IShippingService>();
+
+            inventoryService.CheckStock(Arg.Any<string>()).Returns(true);
+            paymentService.ProcessPayment(Arg.Any<string>(), Arg.Any<decimal>()).Returns(true);
+            shippingService.CalculateShippingCost(Arg.Any<string>()).Returns(10.0m);
+            shippingService.GenerateShippingLabel(Arg.Any<string>()).Returns("EtiquetaDeEnvio2024");
+
+            var facade = new EcommerceFacade(paymentService, shippingService, inventoryService);
+
+            var placeOrder = facade.PlaceOrder("productId", 1, "1234567890", "address");
+
+            using (new AssertionScope())
+            {
+                placeOrder.Should().BeTrue();
+                inventoryService.Received(1).CheckStock("productId");
+                paymentService.Received(1).ProcessPayment("1234567890", 100);
+                shippingService.Received(1).GenerateShippingLabel("address");
+            }
+        }
+    }
+}
+```
+
 ## Behavioral
 
 ### Chain of Responsability ###
