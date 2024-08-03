@@ -1203,7 +1203,6 @@ namespace DesignPatterns.Structural.Proxy
 }
 ```
 
-
 ### Flyweight ###
 - Flyweight é um padrão de projeto estrutural que permite otimizar o uso de objetos alocados na memória RAM, compartilhando estados comuns entre os objetos, ao invés de criar um para cada objeto.
 - Utilize o padrão Flyweight apenas quando seu programa deve suportar um grande números de objetos que não cabe na memória RAM.
@@ -1315,6 +1314,128 @@ namespace DesignPatterns.Tests.Flyweight
 
             paymentSlip.Should().NotBe(payPal);
         }
+    }
+}
+```
+
+### Bridge ###
+- O Bridge é um padrão de projeto estrutural que você divida uma classe grande intimamente ligadas em duas hierarquias separadas.
+- Separa uma classe em abstração e implementação.
+- Pode ser usado em conjunto com Abstract Factory.
+- Utilize o padrão quando você quer dividir uma classe monolítica que tem diversas variantes da mesma funcionalidade.
+- Utilize o padrão quando você precisa estender uma classe em diversas dimensões independentes.
+
+**Exemplos**:
+- Uma classe forma que tem variantes como: círculo e quadrado e de cor como> vermelho e azul. Pode usar o padrão Bridge separando em duas hierarquias: forma e cor.
+- Para mudar sites entre tema claro e tema escuro.
+- Para calcular o preço de mercadorias que variam entre produto e comida e kilos e quantidade.
+
+**PROS**
+- Pode criar classes e aplicações independentes da plataforma.
+- O código do cliente trabalha com aplicações de alto nível, não estando exposto a detalhes de plataforma.
+- Princípio aberto e fechado: Pode introduzir novas abstrações e implementações independentemente uma das outras.
+- Princípio de responsabilidade única: Pode focar na lógica de alto nível na abstração e em detalhes na implementação.
+
+**CONS**
+- Pode tornar o código mais complexo ao aplicar o padrão em uma classe altamente coesa.
+
+**Como implementar?**
+- Veja quais operações o cliente precisa e defina a classe abstração base.
+
+```csharp
+public abstract class Item
+{
+    protected readonly IUnit _unit;
+
+    public Item(IUnit unit)
+    {
+        _unit = unit;
+    }
+
+    public string Title { get; set; } = null!;
+    public decimal PricePerUnit { get; set; }
+
+    public abstract decimal GetTotalPrice(decimal units);
+}
+```
+
+- Crie a interface de implementação base.
+
+```csharp
+public interface IUnit
+{
+    decimal Minimum { get; set; }
+    decimal Maximum { get; set; }
+    bool Validate(decimal units);
+}
+```
+
+- Implemente as subclasses concretas de implementação.
+
+```csharp
+public class Kg : IUnit
+{
+    public decimal Minimum { get; set; }
+    public decimal Maximum { get; set; }
+
+    public bool Validate(decimal units)
+    {
+        return units < 10;
+    }
+}
+
+public class Quantity : IUnit
+{
+    public Quantity()
+    {
+        Minimum = 1;
+        Maximum = 200;
+    }
+
+    public decimal Minimum { get; set; }
+    public decimal Maximum { get; set; }
+
+    public bool Validate(decimal units)
+    {
+        if (units % 1 != 0) return false;
+        if (Minimum > units || Maximum < units) return false;
+        return true;
+    }
+}
+```
+
+- Implemente as subclasses de abstração.
+
+```csharp
+public class Food : Item
+{
+    public Food(IUnit unit) : base(unit) { }
+
+    public string NutritionLabel { get; set; }
+
+    public override decimal GetTotalPrice(decimal units)
+    {
+        if (!_unit.Validate(units))
+        {
+            throw new ArgumentException();
+        }
+        return units * PricePerUnit;
+    }
+}
+
+public class Product : Item
+{
+    public Product(IUnit unit) : base(unit) { }
+
+    public string Category { get; set; } = null!;
+
+    public override decimal GetTotalPrice(decimal units)
+    {
+        if (!_unit.Validate(units))
+        {
+            throw new ArgumentException();
+        }
+        return units * PricePerUnit;
     }
 }
 ```
