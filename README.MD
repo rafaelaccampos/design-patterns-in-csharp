@@ -3477,6 +3477,125 @@ namespace DesignPatterns.Tests.Memento
 }
 ```
 
+### Iterator ###
+- O Iterador é um padrão de projeto comportamental que permite percorrer elementos de uma coleção sem expor seus detalhes (pilha, fila, árvore) para o cliente.
+- Utilize o padrão quando sua coleção tiver uma estrutura de dados complexa, mas você não deseja expor ao cliente.
+- Utilize o padrão para reduzir código duplicado de travessia.
+- Utilize o padrão quando você precisa percorrer diferentes estruturas de dados ou quando essas estruturas são desconhecidas de antemão.
+
+**Exemplos**
+- Coleções em linguagens de programação (Java, C# e etc).
+- Interfaces de navegação em aplicativos de software (galeria de fotos, e-books e etc).
+
+**PROS**
+- Princípio da responsabilidade única: extração de algoritmos de travessia para classes separadas.
+- Princípio aberto e fechado: pode implementar novos tipos de coleções e iteradores sem quebrar o código já existente.
+- Pode iterar em paralelo sobre a mesma coleção.
+- Pode atrasar uma iteração e continuá-la quando necessário.
+
+**CONS**
+- Aplicar o padrão pode ser preciosismo se sua aplicação só trabalha com coleções simples.
+- Usar um iterador pode ser menos eficiente do que percorrer elementos com coleções especializadas diretamente.
+
+**Como implementar?**
+- Crie a classe dos elementos que serão iterados e armazenados.
+
+```csharp
+namespace DesignPatterns.Behavioral.Iterator
+{
+    public class Customer
+    {
+        public string FullName { get; set; } = null!;
+
+        public string Email { get; set; } = null!;
+    }
+}
+```
+
+- Crie a coleção iterável.
+
+```csharp
+
+using System.Collections;
+
+namespace DesignPatterns.Behavioral.Iterator
+{
+    public class CustomerToNotify : IEnumerable<KeyValuePair<string, string>>
+    {
+        private Dictionary<string, string> _customers;
+
+        public CustomerToNotify(IList<Customer> customer, string generatedBy)
+        {
+            _customers = customer.ToDictionary(c => c.FullName, c => c.Email);
+            GeneratedAt = DateTime.Now;
+            GeneratedBy = generatedBy;
+        }
+
+        public string this[string customerFullName]
+        {
+            get {
+                if (_customers.ContainsKey(customerFullName))
+                {
+                    return _customers[customerFullName];
+                }
+                return null!;
+            }
+            set
+            {
+                _customers[customerFullName] = value;
+            }
+        }
+
+        public DateTime GeneratedAt { get; set; }
+
+        public string GeneratedBy { get; set; }
+
+        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+        {
+            return _customers.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
+}
+```
+
+- Crie o cliente que vai usar a iteração.
+
+```csharp
+using DesignPatterns.Behavioral.Iterator;
+
+namespace DesignPatterns.Tests.Iterator
+{
+    public class CustomerNotifyTests
+    {
+        [Test]
+        public void ShouldBeAbleToIterateThroughCustomers()
+        {
+            var customers = new List<Customer>
+            {
+                new Customer { FullName = "Fulano", Email = "fulano@example.com" },
+                new Customer { FullName = "Fulana", Email = "fulana@example.com" },
+            };
+
+            var customerToNotify = new CustomerToNotify(customers, "me");
+
+            var notifiedCustomers = new Dictionary<string, string>();
+
+            foreach (var customer in customers)
+            {
+                notifiedCustomers[customer.FullName] = customer.Email;
+            }
+
+           CollectionAssert.AreEquivalent(notifiedCustomers, customerToNotify);
+        }
+    }
+}
+```
+
 ## 🧪 Techs
 
 This project was develop with the following technologies:
