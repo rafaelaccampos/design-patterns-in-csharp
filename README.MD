@@ -3267,6 +3267,216 @@ namespace DesignPatterns.Tests.State
 }
 ```
 
+### Memento ###
+- O Memento é um padrão de projeto comportamental que permite que você salve e restaure o estado anterior de um objeto.
+- Armazena a cópia do objeto em um objeto especial chamado Memento.
+- Permite que você mantenha o encapsulamento (campos privados) para restaurar o objeto.
+- Pode ser utilizado com o padrão Command para armazenar retratos do estado e restaurá-lo.
+- Utilize o padrão quando você precisar produzir retratos do estado de um objeto para restaurar um estado anterior.
+- Utilize o padrão quando o acesso direto para os campos de um objeto viola o encapsulamento.
+- Especialmente útil para lidar com transações.
+
+**Exemplos**
+- Editores de texto e software de edição para implementação do desfazer e refazer.
+- Jogos de vídeo para salvar o estado do jogo em snapshots.
+- Sistemas de banco de dados para lidar com transações, o estado do Banco é salvo antes de uma transação começar. Se a transação falhar ou precisar ser revertida, o estado anterior pode ser restaurado.
+- Carrinho de compras.
+
+**PROS**
+- Produz retratos do estado de um objeto sem violar seu encapsulamento.
+
+**CONS**
+- Pode consumir muita memória RAM se os clientes criarem muitos Mementos com frequência.
+- Cuidadoras devem acompanhar o ciclo de vida da originadora para serem capazes de destruir mementos obsoletos.
+- Linguagens dinâmicas (PHP, Python, JavaScript) não conseguem garantir que o estado do Memento permaneça intacto.
+
+**Como implementar?**
+- Crie a classe que vai ser a originadora (produz retratos e restaura o estado).
+
+```csharp
+namespace DesignPatterns.Behavioral.Memento
+{
+    public interface IShoppingCartOriginator
+    {
+        Guid CustomerId { get; }
+
+        Dictionary<Guid, int> Items { get; }
+
+        void Restore(IShoppingCartMemento shoppingCartMemento);
+
+        void UpdateCart(IList<OrderItemInput> items);
+
+        IShoppingCartMemento SaveSnapshot();
+    }
+}
+namespace DesignPatterns.Behavioral.Memento
+{
+    public class ShoppingCartOriginator : IShoppingCartOriginator
+    {
+        public ShoppingCartOriginator(Guid customerId, IList<OrderItemInput> items)
+        {
+            CustomerId = customerId;
+            Items = items.ToDictionary(item => item.ProductId, item => item.Quantity);
+        }
+            
+        public Guid CustomerId { get; private set; }
+
+        public Dictionary<Guid, int> Items { get; private set; }
+
+        public void Restore(IShoppingCartMemento shoppingCartMemento)
+        {
+            var shoppingCart = shoppingCartMemento as ShoppingCartMemento;
+            Items = shoppingCart!.Items;
+        }
+
+        public void UpdateCart(IList<OrderItemInput> items)
+        {
+            Items = items.ToDictionary(item => item.ProductId, item => item.Quantity);
+        }
+
+        public IShoppingCartMemento SaveSnapshot()
+        {
+            return new ShoppingCartMemento(CustomerId, Items);
+        }
+    }
+}
+```
+
+- Crie a classe memento e faça o memento ser imutável.
+
+```csharp
+namespace DesignPatterns.Behavioral.Memento
+{
+    public interface IShoppingCartMemento
+    {
+        Guid CustomerId { get; }
+
+        Dictionary<Guid, int> Items { get; }
+
+        DateTime SavedAt { get; }
+    }
+}
+namespace DesignPatterns.Behavioral.Memento
+{
+    public class ShoppingCartMemento : IShoppingCartMemento
+    {
+        public ShoppingCartMemento(Guid customerId, Dictionary<Guid, int> items)
+        {
+            CustomerId = customerId;
+            Items = items;
+            SavedAt = DateTime.UtcNow;
+        }
+
+        public Guid CustomerId { get; private set; }
+
+        public Dictionary<Guid, int> Items { get; private set; }
+
+        public DateTime SavedAt { get; private set; }
+    }
+}
+```
+- A cuidadora, pode representar um objeto comando, um histórico, ou algo completamente diferente, deve saber quando pedir novos mementos da originadora, como armazená-los, e quando restaurar a originadora com um memento em particular.
+
+```csharp
+namespace DesignPatterns.Behavioral.Memento
+{
+    public class ShoppingCartCaretaker
+    {
+        public readonly ShoppingCartOriginator Originator;
+        public readonly IList<IShoppingCartMemento> _mementos;
+
+        public ShoppingCartCaretaker(ShoppingCartOriginator originator)
+        {
+            Originator = originator;
+            _mementos = new List<IShoppingCartMemento>();
+        }
+
+        public void Backup()
+        {
+            _mementos.Add(Originator.SaveSnapshot());
+        }
+
+        public void Undo()
+        {
+            if(_mementos.Count == 0)
+            {
+                return;
+            }
+
+            var lastMemento = _mementos.Last();
+
+            Originator.Restore(lastMemento);
+        }
+
+        public void PrintHistory()
+        {
+            foreach(var memento in _mementos)
+            {
+                var items = string.Join(' ', memento.Items.Select(i => $"> Item: {i.Key}, Quantity: {i.Value}"));
+                Console.WriteLine($"Customer: {memento.CustomerId}, Items: {items}\n");
+            }
+        }
+    }
+}
+```
+- Crie a classe cliente
+
+```csharp
+using DesignPatterns.Behavioral.Memento;
+using FluentAssertions;
+
+namespace DesignPatterns.Tests.Memento
+{
+    public class ShoppingCartCareTakerTests
+    {
+        [Test]
+        public void ShouldBeAbleToMakeBackUpAndUndo()
+        {
+            var customerId = Guid.NewGuid();
+            var orderItemsInput = new List<OrderItemInput>
+            {
+                new OrderItemInput { ProductId = Guid.NewGuid(), Quantity = 1 },
+                new OrderItemInput { ProductId = Guid.NewGuid(), Quantity = 3 },
+            };
+            var originator = new ShoppingCartOriginator(customerId, orderItemsInput);
+            var careTaker = new ShoppingCartCaretaker(originator);
+
+            careTaker.Backup();
+            originator.UpdateCart(new List<OrderItemInput>
+            {
+                new OrderItemInput { ProductId = Guid.NewGuid(), Quantity = 3 },
+            });
+            careTaker.Backup();
+            careTaker.Undo();
+
+            careTaker._mementos.Count.Should().Be(2);
+        }
+
+        [Test]
+        public void ShouldBeAbleToMakePrintHistory()
+        {
+            var customerId = Guid.NewGuid();
+            var orderItemsInput = new List<OrderItemInput>
+            {
+                new OrderItemInput { ProductId = Guid.NewGuid(), Quantity = 1 },
+            };
+            var originator = new ShoppingCartOriginator(customerId, orderItemsInput);
+            var careTaker = new ShoppingCartCaretaker(originator);
+
+            careTaker.Backup();
+
+            using (StringWriter stringWriter = new StringWriter())
+            {
+                Console.SetOut(stringWriter);
+                careTaker.PrintHistory();
+                var expected = @$"Customer: {customerId}, Items: > Item: {originator.Items.First().Key}, Quantity: {originator.Items.First().Value} ";
+                stringWriter.ToString().Trim().Should().Be(expected.Trim());
+            }
+        }
+    }
+}
+```
+
 ## 🧪 Techs
 
 This project was develop with the following technologies:
