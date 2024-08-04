@@ -1715,6 +1715,140 @@ namespace DesignPatterns.Tests.Facade
 }
 ```
 
+### Composite ###
+- O Composite é um padrão de projeto estrutural que permite que você componha objetos em estruturas de árvores.
+- O uso do padrão Composite só faz sentido se o modelo conseguir ser representado como uma árvore.
+- Utilize o padrão Composite quando você tem que implementar uma estrutura que se assemelha a uma árvore.
+- Utilize o padrão quando você deseja que o código cliente trate objetos simples e compostos de forma uniforme.
+- O Chain of Responsability é frequentemente usado com o Composite.
+- O Visitor pode executar uma operação sobre uma árvore Composite.
+
+**Exemplos**:
+- Para cálculo de custos de uma equipe (que possui gerente, desenvolvedores e etc).
+- Hierarquias organizacionais.
+- Modelo de objeto de documento (DOM).
+
+**PROS**
+- Pode trabalhar com estruturas de árvores complexas utilizando polimorfismo e a recursão a seu favor.
+- Princípio aberto e fechado: pode introduzir novos tipos de elementos na aplicação sem quebrar o código existente.
+
+**CONS**
+- Pode ser difícil providenciar uma interface comum para classes que diferem muito. Em certos cenários será necessário generalizar muito a interface tornando-a de difícil compreensão.
+
+**Como implementar?**
+- Declare a interface do componente como uma lista de métodos para componentes complexos e simples.
+
+```csharp
+namespace DesignPatterns.Structural.Composite
+{
+    public abstract class EmployeeComponent
+    {
+        protected EmployeeComponent(
+            string name,
+            string role, 
+            decimal expenses)
+        {
+            Name = name;
+            Role = role;
+            Expenses = expenses;
+        }
+
+        public string Name { get; private set; }
+
+        public string Role { get; private set; }
+
+        public decimal Expenses { get; private set; }
+
+        public abstract decimal GetExpenses();
+    }
+}
+```
+
+- Crie uma classe folha que represente elementos simples.
+
+```csharp
+namespace DesignPatterns.Structural.Composite
+{
+    public class Employee : EmployeeComponent
+    {
+        public Employee(string name, string role, decimal expenses)
+            : base(name, role, expenses)
+        {
+        }
+
+        public override decimal GetExpenses()
+            => Expenses;
+    }
+}
+```
+
+- Crie uma classe container para representar elementos complexos. Essa classe deve armazenar folhas e containers.
+- Defina os métodos para adicionar e remover os elementos filhos no container.
+
+```csharp
+namespace DesignPatterns.Structural.Composite
+{
+    public class ManagerComposite : EmployeeComponent
+    {
+        private readonly IList<EmployeeComponent> _children;
+
+        public ManagerComposite(string name, string role, decimal expenses) 
+            : base(name, role, expenses)
+        {
+            _children = new List<EmployeeComponent>();
+        }
+
+        public override decimal GetExpenses()
+        {
+            return _children.Sum(c => c.GetExpenses()) + Expenses;
+        }
+
+        public void Add(EmployeeComponent component)
+        {
+            _children.Add(component);
+        }
+
+        public void Remove(EmployeeComponent component)
+        {
+            _children.Remove(component);
+        }
+    }
+}
+```
+
+- Defina a classe cliente.
+
+```csharp
+using DesignPatterns.Structural.Composite;
+using FluentAssertions;
+using FluentAssertions.Execution;
+
+namespace DesignPatterns.Tests.Composite
+{
+    public class CompositeTests
+    {
+        [Test]
+        public void ShouldBeAbleToGetExpensesFromEmployees()
+        {
+            var composite = new ManagerComposite("John Doe", "Director", 100000);
+            composite.Add(new Employee("Janice", "Programmer", 300));
+            composite.Add(new Employee("London", "Programmer", 300));
+
+            var secondComposite = new ManagerComposite("Nathaniel", "Manager", 15000);
+            composite.Add(secondComposite);
+            secondComposite.Add(new Employee("David", "Architect", 300));
+            secondComposite.Add(new Employee("Jake", "Architect", 300));
+
+            using (new AssertionScope())
+            {
+                composite.GetExpenses().Should().Be(116200);
+                secondComposite.GetExpenses().Should().Be(15600);
+            }
+        }
+    }
+}
+```
+
 ## Behavioral
 
 ### Chain of Responsability ###
