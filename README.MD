@@ -3595,6 +3595,217 @@ namespace DesignPatterns.Tests.Iterator
 }
 ```
 
+### Interpreter ###
+- Interpreter é um padrão de projeto comportamental que define uma representação e interpretação para uma linguagem.
+- Útil quando você deseja definir uma linguagem ou expressão que foi definida em um domínio específico.
+
+**Exemplos**
+- Calculadora de expressões.
+- Interpretação de consultas (sistemas de banco de dados que interpretam consultas SQL).
+
+**PROS**
+- Extensibilidade: é fácil adicionar novas regras ou símbolos da linguagem.
+- Representação clara da linguagem: pode proporcionar uma representação clara e extensível para uma linguagem de domínio específico.
+- Facilita a implementação de linguagens: pode ser uma maneira eficaz de implementar pequenas linguagens de script e fórmulas.
+
+**CONS**
+- Complexidade: para linguagens complexas, o número de regras e classes necessárias pode se tornar muito grande, tornando o código difícil de gerenciar e manter.
+- Baixo desempenho: o interpretador pode ser lento, especialmente em estruturas complexas.
+
+**Como implementar?**
+- Defina a interface do Interpreter que vai ser implementada pelas classes concretas.
+
+```csharp
+public interface IExpression
+{
+    int Interpret();
+}
+```
+
+- Defina a implementação das classes concretas do Interpreter.
+
+```csharp
+public class NumberExpression : IExpression
+{
+    private int _number;
+
+    public NumberExpression(int number)
+    {
+        _number = number;
+    }
+
+    public int Interpret()
+    {
+        return _number;
+    }
+}
+public class AdditionExpression : IExpression
+{
+    private IExpression _leftExpression;
+    private IExpression _rightExpression;
+
+    public AdditionExpression(IExpression leftExpression, IExpression rightExpression)
+    {
+        _leftExpression = leftExpression;
+        _rightExpression = rightExpression;
+    }
+
+    public int Interpret()
+    {
+        return _leftExpression.Interpret() + _rightExpression.Interpret();
+    }
+}
+public class MultiplicationExpression : IExpression
+{
+    private IExpression _leftExpression;
+    private IExpression _rightExpression;
+
+    public MultiplicationExpression(IExpression leftExpression, IExpression rightExpression)
+    {
+        _leftExpression = leftExpression;
+        _rightExpression = rightExpression;
+    }
+
+    public int Interpret()
+    {
+        return _leftExpression.Interpret() * _rightExpression.Interpret();
+    }
+}
+
+```
+
+- Defina a classe que faz o parser da expressão, que converte a expressão de uma forma que ela pode ser avaliada.
+
+```csharp
+public class ExpressionParser
+{
+    public IExpression Parse(string expression)
+    {
+        var rpn = ConvertToRPN(expression);
+        return EvaluateRPN(rpn);
+    }
+
+    private Queue<string> ConvertToRPN(string expression)
+    {
+        var outputQueue = new Queue<string>();
+        var operatorStack = new Stack<string>();
+        var tokens = expression.Split(' ');
+
+        var precedence = new Dictionary<string, int>
+        {
+            { "+", 1 },
+            { "*", 2 }
+        };
+
+        foreach (var token in tokens)
+        {
+            if (int.TryParse(token, out _))
+            {
+                outputQueue.Enqueue(token);
+            }
+            else if (token == "+" || token == "*")
+            {
+                while (operatorStack.Any() && precedence[operatorStack.Peek()] >= precedence[token])
+                {
+                    outputQueue.Enqueue(operatorStack.Pop());
+                }
+                operatorStack.Push(token);
+            }
+            else
+            {
+                throw new InvalidOperationException($"Unexpected token: {token}");
+            }
+        }
+
+        while (operatorStack.Any())
+        {
+            outputQueue.Enqueue(operatorStack.Pop());
+        }
+
+        return outputQueue;
+    }
+
+    private IExpression EvaluateRPN(Queue<string> rpn)
+    {
+        var stack = new Stack<IExpression>();
+
+        while (rpn.Any())
+        {
+            var token = rpn.Dequeue();
+
+            if (int.TryParse(token, out int number))
+            {
+                stack.Push(new NumberExpression(number));
+            }
+            else if (token == "+")
+            {
+                var right = stack.Pop();
+                var left = stack.Pop();
+                stack.Push(new AdditionExpression(left, right));
+            }
+            else if (token == "*")
+            {
+                var right = stack.Pop();
+                var left = stack.Pop();
+                stack.Push(new MultiplicationExpression(left, right));
+            }
+            else
+            {
+                throw new InvalidOperationException($"Unexpected token: {token}");
+            }
+        }
+
+        return stack.Pop();
+    }
+}
+```
+
+- Defina o cliente do Interpreter.
+
+```csharp
+using DesignPatterns.Behavioral.Interpreter;
+using FluentAssertions;
+
+namespace DesignPatterns.Tests.Interpreter
+{
+    [TestFixture]
+    public class InterpreterTests
+    {
+        private ExpressionParser _parser;
+
+        [SetUp]
+        public void Setup()
+        {
+            _parser = new ExpressionParser();
+        }
+
+        [Test]
+        public void ShouldBeAbleToTestAddition()
+        {
+            var expression = _parser.Parse("3 + 5");
+            var interpret = expression.Interpret();
+            interpret.Should().Be(8);
+        }
+
+        [Test]
+        public void ShouldBeAbleToTestMultiplication()
+        {
+            var expression = _parser.Parse("3 * 5");
+            var interpret = expression.Interpret();
+            interpret.Should().Be(15);
+        }
+
+        [Test]
+        public void ShouldBeAbleToTestComplexExpression()
+        {
+            var expression = _parser.Parse("3 + 5 * 2");
+            var interpret = expression.Interpret();
+            interpret.Should().Be(13);
+        }
+    }
+}
+```
+
 ## 🧪 Techs
 
 This project was develop with the following technologies:
