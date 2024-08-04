@@ -3515,7 +3515,6 @@ namespace DesignPatterns.Behavioral.Iterator
 - Crie a coleção iterável.
 
 ```csharp
-
 using System.Collections;
 
 namespace DesignPatterns.Behavioral.Iterator
