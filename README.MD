@@ -1521,6 +1521,8 @@ namespace DesignPatterns.Tests.Bridge
 ### Facade ###
 - O Facade é um padrão de projeto estrutural que fornece uma interface simples para um subsistema complexo.
 - Utilize o padrão quando você precisa de uma interface limitada, mas simples para um subsistema complexo.
+- Abstrai um subsistema.
+- Um use case pode ser considerado um Facade.
 - Utilize o padrão quando você quer estruturar um subsistema em camadas.
 - Um exemplo do mundo real é ligar e desligar o computador que nós só interagimos com o botão, mas existe todo um subsistema contido nessas duas funcionalidades.
 - O Facade envolve um subsistema inteiro de objetos, enquanto o Adapter envolve um objeto.
